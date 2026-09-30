@@ -1,0 +1,200 @@
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import type { ArtConfig } from '../../core/models';
+
+interface Line {
+  text: string;
+  x: number;
+  y: number;
+  size: number;
+}
+
+@Component({
+  selector: 'app-poster',
+  standalone: true,
+  imports: [],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `
+    @if (art()) {
+      <div class="poster" [style.aspect-ratio]="'2 / 3'" [attr.aria-label]="title()">
+        <svg class="poster__svg" viewBox="0 0 400 600" preserveAspectRatio="xMidYMid slice" [attr.role]="'img'">
+          <defs>
+            <linearGradient id="pg-{{ uid }}" x1="0" y1="0" x2="0.6" y2="1">
+              <stop offset="0" [attr.stop-color]="art()!.bg[0]" />
+              <stop offset="1" [attr.stop-color]="art()!.bg[1]" />
+            </linearGradient>
+            <linearGradient id="pg2-{{ uid }}" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" [attr.stop-color]="art()!.accent" stop-opacity="0.85" />
+              <stop offset="1" [attr.stop-color]="art()!.accent2" stop-opacity="0.85" />
+            </linearGradient>
+            <radialGradient id="pg3-{{ uid }}" cx="0.5" cy="0.5" r="0.5">
+              <stop offset="0" [attr.stop-color]="art()!.accent" stop-opacity="0.55" />
+              <stop offset="1" [attr.stop-color]="art()!.accent" stop-opacity="0" />
+            </radialGradient>
+          </defs>
+
+          <rect width="400" height="600" [attr.fill]="pgRef" />
+
+          <!-- composition -->
+          @switch (art()!.style) {
+            @case ('surge') {
+              <rect width="400" height="600" [attr.fill]="pg3Ref" opacity="0.6" />
+              <circle cx="318" cy="130" r="54" [attr.fill]="art()!.accent2" opacity="0.55" />
+              <path d="M-20 432 C 70 352, 170 470, 252 416 S 380 348, 420 446 L 420 600 L -20 600 Z" [attr.fill]="art()!.accent" />
+              <path d="M-20 500 C 90 428, 200 540, 300 486 S 410 470, 420 512 L 420 600 L -20 600 Z" [attr.fill]="art()!.accent2" opacity="0.85" />
+              <path d="M-20 560 C 100 520, 220 590, 320 556 S 420 560, 420 588 L 420 600 L -20 600 Z" [attr.fill]="art()!.bg[1]" />
+              <circle cx="318" cy="130" r="62" fill="none" [attr.stroke]="art()!.accent" stroke-width="1" opacity="0.4" stroke-dasharray="2 6" />
+            }
+            @case ('orbit') {
+              <circle cx="200" cy="300" r="150" fill="none" [attr.stroke]="art()!.accent" stroke-width="1.2" opacity="0.5" />
+              <circle cx="200" cy="300" r="104" fill="none" [attr.stroke]="art()!.accent" stroke-width="1" opacity="0.7" stroke-dasharray="4 10" transform="rotate(24 200 300)" />
+              <circle cx="200" cy="300" r="58" fill="none" [attr.stroke]="art()!.accent2" stroke-width="1.4" />
+              <circle cx="290" cy="196" r="34" [attr.fill]="art()!.accent2" />
+              <circle cx="206" cy="412" r="8" [attr.fill]="art()!.accent" />
+              <circle cx="316" cy="300" r="12" fill="none" [attr.stroke]="art()!.accent" stroke-width="1.6" />
+              <rect x="30" y="120" width="340" height="1" [attr.fill]="art()!.accent" opacity="0.28" />
+            }
+            @case ('monolith') {
+              <rect x="122" y="70" width="156" height="330" [attr.fill]="art()!.accent2" opacity="0.25" />
+              <rect x="142" y="52" width="116" height="360" [attr.fill]="art()!.accent" />
+              <rect x="182" y="52" width="36" height="360" [attr.fill]="art()!.bg[1]" opacity="0.7" />
+              <path d="M142 600 L142 420 L258 420 L258 600 Z" [attr.fill]="art()!.accent" opacity="0.12" />
+              <line x1="142" y1="600" x2="400" y2="600" [attr.stroke]="art()!.accent2" stroke-width="2" />
+              <line x1="142" y1="600" x2="0" y2="600" [attr.stroke]="art()!.accent2" stroke-width="2" />
+              <rect x="0" y="500" width="400" height="100" [attr.fill]="art()!.bg[1]" opacity="0.6" />
+            }
+            @case ('horizon') {
+              <path d="M-20 420 L 210 180 L 420 420 Z" [attr.fill]="pg2Ref" opacity="0.92" />
+              <circle cx="210" cy="300" r="120" fill="none" [attr.stroke]="art()!.accent" stroke-width="1" opacity="0.5" stroke-dasharray="3 8" />
+              <rect y="470" width="400" height="130" [attr.fill]="art()!.accent2" opacity="0.35" />
+              <path d="M-20 498 L 120 452 L 220 486 L 300 460 L 420 492 L 420 600 L -20 600 Z" [attr.fill]="art()!.bg[1]" opacity="0.85" />
+              <path d="M-20 540 C 110 500, 260 570, 420 528 L 420 600 L -20 600 Z" [attr.fill]="art()!.bg[1]" />
+            }
+            @case ('prism') {
+              <circle cx="200" cy="250" r="130" [attr.fill]="pg3Ref" />
+              <g transform="rotate(-14 200 300)">
+                <polygon points="200,80 330,340 70,340" [attr.fill]="art()!.accent" opacity="0.34" />
+              </g>
+              <g transform="rotate(6 200 320)">
+                <polygon points="200,120 312,360 88,360" [attr.fill]="art()!.accent2" opacity="0.5" />
+              </g>
+              <polygon points="200,180 270,360 130,360" fill="none" [attr.stroke]="art()!.accent" stroke-width="2" />
+              <line x1="200" y1="600" x2="200" y2="180" [attr.stroke]="art()!.accent" stroke-width="1" opacity="0.5" stroke-dasharray="2 6" />
+            }
+            @case ('veil') {
+              <circle cx="200" cy="240" r="170" [attr.fill]="pg3Ref" opacity="0.8" />
+              <circle cx="330" cy="430" r="110" [attr.fill]="pg3Ref" opacity="0.6" transform="translate(0 0)" />
+              <path d="M0 300 C 120 220, 260 380, 400 280" fill="none" [attr.stroke]="art()!.accent" stroke-width="1.4" opacity="0.6" />
+              <path d="M0 320 C 130 260, 250 400, 400 300" fill="none" [attr.stroke]="art()!.accent2" stroke-width="1.4" opacity="0.5" />
+              <path d="M0 340 C 110 300, 260 420, 400 320" fill="none" [attr.stroke]="art()!.accent" stroke-width="1" opacity="0.4" />
+              <circle cx="200" cy="420" r="5" [attr.fill]="art()!.accent2" />
+              <circle cx="120" cy="150" r="3" [attr.fill]="art()!.accent" />
+              <circle cx="300" cy="120" r="4" [attr.fill]="art()!.accent2" opacity="0.7" />
+            }
+            @case ('arc') {
+              <path d="M96 600 C 96 250, 304 250, 304 600" fill="none" [attr.stroke]="art()!.accent" stroke-width="26" />
+              <path d="M112 600 C 112 268, 288 268, 288 600" fill="none" [attr.stroke]="art()!.accent2" stroke-width="6" opacity="0.9" />
+              <path d="M148 600 C 148 320, 252 320, 252 600" [attr.fill]="art()!.accent" opacity="0.18" />
+              <rect x="132" y="392" width="136" height="208" [attr.fill]="art()!.bg[1]" opacity="0.55" />
+              <circle cx="200" cy="392" r="42" fill="none" [attr.stroke]="art()!.accent" stroke-width="1.4" />
+              <circle cx="200" cy="392" r="26" fill="none" [attr.stroke]="art()!.accent2" stroke-width="1.4" />
+              <path d="M80 160 L 320 160" [attr.stroke]="art()!.accent" stroke-width="1" opacity="0.5" stroke-dasharray="2 6" />
+            }
+            @case ('grid') {
+              <path d="M0 600 L 400 600 L 400 0 M0 0" fill="none" [attr.stroke]="art()!.accent" stroke-width="1" opacity="0.3" stroke-dasharray="60 18" />
+              <g opacity="0.7">
+                @for (x of gridLines; track x) {
+                  <line x1="200" y1="360" [attr.x2]="x" y2="600" [attr.stroke]="art()!.accent2" stroke-width="1" opacity="0.5" />
+                }
+              </g>
+              <path d="M0 360 C 130 320, 270 320, 400 360 L 400 600 L 0 600 Z" [attr.fill]="art()!.bg[1]" opacity="0.7" />
+              <rect x="0" y="352" width="400" height="6" [attr.fill]="art()!.accent" opacity="0.9" />
+              <circle cx="200" cy="300" r="70" [attr.fill]="art()!.accent" opacity="0.16" />
+            }
+            @case ('cross') {
+              <rect x="0" y="226" width="400" height="34" [attr.fill]="art()!.accent" opacity="0.9" />
+              <rect x="60" y="60" width="34" height="480" [attr.fill]="art()!.accent" opacity="0.7" />
+              <rect x="220" y="130" width="26" height="400" [attr.fill]="art()!.accent2" opacity="0.8" transform="rotate(8 233 330)" />
+              <circle cx="200" cy="400" r="110" [attr.fill]="pg3Ref" opacity="0.5" />
+            }
+            @case ('waves') {
+              @for (w of waves; track w) {
+                <circle cx="200" cy="380" [attr.r]="w.r" fill="none" [attr.stroke]="w.c" stroke-width="1.4" opacity="0.6" [attr.transform]="'translate(0 -' + w.dy + ')'" />
+              }
+              <circle cx="200" cy="380" r="18" [attr.fill]="art()!.accent" />
+              <path d="M0 600 L 60 470 C 140 420, 260 500, 400 430 L 400 600 Z" [attr.fill]="art()!.accent2" opacity="0.35" />
+            }
+          }
+
+          <!-- frame + label + title -->
+          <rect x="16" y="16" width="368" height="568" fill="none" stroke="rgba(242,239,232,0.14)" stroke-width="1.2" />
+          <text x="28" y="44" font-size="10" letter-spacing="4" [attr.fill]="art()!.accent" font-weight="700" font-family="Manrope, Tajawal, sans-serif">NOIR · ORIGINAL</text>
+          <text x="28" y="58" font-size="9.5" letter-spacing="2" fill="rgba(242,239,232,0.35)" font-family="Manrope, Tajawal, sans-serif">{{ year() }}</text>
+
+          <g>
+            @for (line of lines(); track line.text) {
+              <text
+                [attr.x]="line.x" [attr.y]="line.y"
+                [attr.font-size]="line.size" letter-spacing="1"
+                [attr.fill]="'#f2efe8'"
+                font-weight="600"
+                font-family="'Playfair Display', Tajawal, serif"
+              >{{ line.text }}</text>
+            }
+          </g>
+        </svg>
+      </div>
+    }
+  `,
+  styles: `
+    .poster {
+      width: 100%; height: 100%; border-radius: inherit; overflow: hidden; background: #000;
+      box-shadow: var(--shadow-md);
+    }
+    .poster__svg { width: 100%; height: 100%; }
+    .poster:hover .poster__svg { transform: scale(1.03); }
+    .poster__svg { transition: transform 0.8s var(--ease); }
+  `,
+  host: { class: 'poster-host' },
+})
+export class PosterComponent {
+  readonly art = input<ArtConfig | null>(null);
+  readonly title = input('');
+  readonly year = input<string | number>('');
+  protected readonly uid = Math.random().toString(36).slice(2, 8);
+  protected readonly pgRef = `url(#pg-${this.uid})`;
+  protected readonly pg2Ref = `url(#pg2-${this.uid})`;
+  protected readonly pg3Ref = `url(#pg3-${this.uid})`;
+  protected readonly gridLines = [0, -60, -120, -180, -240, -300, -360].map((d) => 200 + d);
+  protected readonly waves = [52, 78, 104, 130, 156, 182].map((r, i) => ({
+    r,
+    dy: i * 6,
+    c: i % 2 === 0 ? '#9bcd6f' : '#6d5a8f',
+  }));
+
+  readonly lines = computed(() => {
+    const t = this.title().trim();
+    if (!t) return [];
+    const words = t.split(/\s+/);
+    const out: string[] = [];
+    let current = '';
+    const budget = 14;
+    for (const w of words) {
+      if ((current + ' ' + w).trim().length <= budget) {
+        current = (current + ' ' + w).trim();
+      } else {
+        if (current) out.push(current);
+        current = w.length > budget ? w.slice(0, budget - 1) + '·' : w;
+      }
+    }
+    if (current) out.push(current);
+    const shown = out.slice(0, 3);
+    const size = Math.max(...shown.map((l) => l.length)) > 13 ? 24 : 30;
+    const startY = 600 - 64;
+    return shown.map((text, i) => ({
+      text,
+      x: 32,
+      y: startY - (shown.length - 1 - i) * (size + 8),
+      size,
+    })) as Line[];
+  });
+}
