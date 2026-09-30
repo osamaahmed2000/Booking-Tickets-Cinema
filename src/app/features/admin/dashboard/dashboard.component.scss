@@ -1,0 +1,263 @@
+.dash {
+  animation: fadeUp .6s var(--ease) both;
+}
+
+.dash__head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 26px;
+  flex-wrap: wrap;
+}
+
+.dash__title {
+  font-size: clamp(28px, 4vw, 40px);
+}
+
+.dash__quick {
+  display: flex;
+  gap: 10px;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+@media (max-width: 1100px) {
+  .stats {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 540px) {
+  .stats {
+    grid-template-columns: 1fr;
+  }
+}
+
+.stat {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.stat__label {
+  font-size: 11px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  font-weight: 700;
+}
+
+.stat__value {
+  font-family: var(--font-display);
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.stat__value i {
+  font-style: normal;
+  font-size: 16px;
+  color: var(--gold);
+}
+
+.stat__delta {
+  font-size: 12px;
+  color: var(--text-3);
+}
+
+.stat__delta .up {
+  color: var(--green);
+  font-style: normal;
+}
+
+.stat__bar {
+  height: 5px;
+  border-radius: 4px;
+  background: var(--surface-2);
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.stat__bar span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold), var(--gold-2));
+  border-radius: 4px;
+}
+
+.dash__row {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+@media (max-width: 980px) {
+  .dash__row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.panel {
+  padding: 20px;
+}
+
+.panel__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.panel__head h3 {
+  font-size: 15px;
+}
+
+.panel__more {
+  font-size: 12.5px;
+  color: var(--gold);
+  font-weight: 600;
+}
+
+.chart {
+  width: 100%;
+  height: auto;
+}
+
+.chart .bar {
+  transition: opacity .2s;
+}
+
+.chart .bar:hover {
+  opacity: .75;
+}
+
+.chart__val {
+  fill: var(--text-2);
+  font-size: 10px;
+  font-weight: 600;
+  font-family: Manrope, sans-serif;
+}
+
+.chart__lbl {
+  fill: var(--text-3);
+  font-size: 10px;
+  font-family: Manrope, sans-serif;
+  text-transform: capitalize;
+}
+
+.sellers {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.seller__top {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 7px;
+  font-size: 13.5px;
+}
+
+.seller__name {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.seller__count {
+  color: var(--gold);
+  font-weight: 700;
+}
+
+.seller__track {
+  height: 6px;
+  border-radius: 5px;
+  background: var(--surface-2);
+  overflow: hidden;
+}
+
+.seller__track span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold), var(--gold-2));
+  border-radius: 5px;
+}
+
+.tbl {
+  display: flex;
+  flex-direction: column;
+}
+
+.tbl__row {
+  display: grid;
+  grid-template-columns: 110px 1.2fr 1.3fr 1fr 90px 90px;
+  gap: 12px;
+  align-items: center;
+  padding: 13px 6px;
+  border-top: 1px solid var(--line);
+  font-size: 13.5px;
+}
+
+.tbl__row:first-child {
+  border-top: 0;
+}
+
+.tbl__code {
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: .04em;
+}
+
+.tbl__name {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.tbl__movie,
+.tbl__seats {
+  color: var(--text-2);
+}
+
+.tbl__total {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.badge {
+  display: inline-flex;
+  justify-content: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.badge--ok {
+  color: var(--green);
+  background: rgba(134,181,141,.1);
+  border: 1px solid rgba(134,181,141,.3);
+}
+
+.badge--err {
+  color: var(--red);
+  background: rgba(217,119,106,.1);
+  border: 1px solid rgba(217,119,106,.3);
+}
+
+@media (max-width: 720px) {
+  .tbl__row {
+    grid-template-columns: 80px 1fr 80px;
+    gap: 8px;
+  }
+  .tbl__movie,
+  .tbl__seats {
+    display: none;
+  }
+}

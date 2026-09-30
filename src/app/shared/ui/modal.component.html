@@ -1,0 +1,17 @@
+@if (open) {
+  <div class="modal" (click)="close.emit()">
+    <div class="modal__card" (click)="$event.stopPropagation()" role="dialog" aria-modal="true">
+      <div class="modal__head">
+        <h3 class="modal__title">{{ title }}</h3>
+        <button type="button" class="modal__x" (click)="close.emit()" aria-label="{{ 'C_CLOSE' | tr }}">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M2 2l12 12M14 2L2 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+          </svg>
+        </button>
+      </div>
+      <div class="modal__body">
+        <ng-content></ng-content>
+      </div>
+    </div>
+  </div>
+}

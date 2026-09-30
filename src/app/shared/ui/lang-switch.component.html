@@ -1,0 +1,13 @@
+<div class="lang" role="group" aria-label="Language">
+  @for (l of langs; track l) {
+    <button
+      type="button"
+      class="lang__btn"
+      [class.active]="current === l"
+      (click)="set(l)"
+      [lang]="l"
+    >
+      {{ l === 'en' ? 'EN' : 'عربي' }}
+    </button>
+  }
+</div>

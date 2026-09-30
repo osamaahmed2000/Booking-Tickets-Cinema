@@ -9,24 +9,8 @@ import { ToastsComponent } from './shared/ui/toasts.component';
   selector: 'app-root',
   standalone: true,
   imports: [RouterOutlet, HeaderComponent, FooterComponent, ToastsComponent],
-  template: `
-    <div class="app" [class.is-admin]="isAdmin()">
-      @if (!isAdmin()) {
-        <app-header />
-      }
-      <main class="shell">
-        <router-outlet />
-      </main>
-      @if (!isAdmin()) {
-        <app-footer />
-      }
-      <app-toasts />
-    </div>
-  `,
-  styles: `
-    .shell { min-height: 60vh; }
-    .is-admin { background: var(--bg); }
-  `,
+  templateUrl: './app.html',
+  styleUrl: './app.scss',
 })
 export class App implements OnDestroy {
   readonly isAdmin = signal(false);

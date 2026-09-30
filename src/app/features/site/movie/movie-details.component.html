@@ -1,0 +1,133 @@
+@if (movie(); as m) {
+  <article class="md">
+    <!-- header -->
+    <header
+      class="md__hero"
+      [style.--b0]="m.art.bg[0]"
+      [style.--b1]="m.art.bg[1]"
+    >
+      <div class="md__hero-shade"></div>
+      <div class="container md__hero-in">
+        <a class="md__back" routerLink="/movies">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M11 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          {{ 'C_BACK' | tr }}
+        </a>
+        <div class="md__hero-grid">
+          <div class="md__poster animate-in">
+            <div class="md__poster-frame">
+              <app-poster [art]="m.art" [title]="m.title | local" [year]="m.year" />
+            </div>
+          </div>
+          <div class="md__info animate-in" [style.animation-delay]="'.1s'">
+            <div class="md__chips">
+              @if (m.badge) { <span class="tag tag--gold">{{ m.badge }}</span> }
+              @if (m.status === 'now') { <span class="tag tag--green">{{ 'MOVIES_NOW' | tr }}</span> }
+              @else { <span class="tag">{{ 'MOVIES_SOON' | tr }}</span> }
+            </div>
+            <h1 class="md__title">{{ m.title | local }}</h1>
+            <p class="md__tagline">{{ m.tagline | local }}</p>
+
+            <div class="md__score">
+              <div class="md__ring" [style.--pct]="m.rating * 10">
+                <svg viewBox="0 0 60 60"><circle class="ring__bg" cx="30" cy="30" r="26"/><circle class="ring__fg" cx="30" cy="30" r="26"/></svg>
+                <b>{{ m.rating.toFixed(1) }}</b>
+              </div>
+              <div class="md__meta">
+                <span>{{ m.year }} · {{ m.durationMin }} {{ 'C_MIN' | tr }} · {{ m.age }} · {{ m.rating.toFixed(1) }}</span>
+                <div class="md__genres">
+                  @for (g of m.genres; track g.en) { <span>{{ g | local }}</span> }
+                </div>
+              </div>
+            </div>
+
+            <div class="md__facts">
+              <div><span>{{ 'MV_DIRECTOR' | tr }}</span><b>{{ m.director | local }}</b></div>
+              <div><span>{{ 'MV_CAST' | tr }}</span><b>{{ castLabel(m) }}</b></div>
+            </div>
+
+            <div class="md__actions">
+              @if (m.status === 'now') {
+                <button type="button" class="btn btn--gold btn--lg" (click)="jumpToShowtimes()">
+                  {{ 'MOVIES_TICKETS' | tr }}
+                  <svg class="icon-fwd" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+              } @else {
+                <span class="tag tag--gold md__soon-tag">● {{ 'MOVIES_NOT_AVAILABLE' | tr }}</span>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- synopsis -->
+    <section class="container section section--tight">
+      <div class="md__columns" reveal>
+        <div class="md__synopsis">
+          <span class="kicker">{{ 'MV_SYNOPSIS' | tr }}</span>
+          <p class="md__synopsis-text">{{ m.overview | local }}</p>
+        </div>
+        <div class="md__aside card" style="padding: 20px 24px;">
+          <div class="md__aside-row"><span>{{ 'MV_YEAR' | tr }}</span><b>{{ m.year }}</b></div>
+          <hr class="rule">
+          <div class="md__aside-row"><span>{{ 'MV_RUNTIME' | tr }}</span><b>{{ m.durationMin }} {{ 'C_MIN' | tr }}</b></div>
+          <hr class="rule">
+          <div class="md__aside-row"><span>{{ 'MV_RATING' | tr }}</span><b>{{ m.rating.toFixed(1) }} / 10</b></div>
+          <hr class="rule">
+          <div class="md__aside-row"><span>{{ 'MV_AGE' | tr }}</span><b>{{ m.age }}</b></div>
+          <hr class="rule">
+          <div class="md__aside-row"><span>{{ 'MV_DIRECTOR' | tr }}</span><b>{{ m.director | local }}</b></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- showtimes -->
+    @if (m.status === 'now') {
+      <section class="container section section--tight" id="showtimes">
+        <div class="section-head" reveal>
+          <div>
+            <span class="kicker">{{ 'MV_SHOWTIMES_SUB' | tr }}</span>
+            <h2 class="title">{{ 'MV_SHOWTIMES' | tr }}</h2>
+          </div>
+        </div>
+
+        <div class="st-days" reveal>
+          @for (d of days(); track d) {
+            <button
+              type="button"
+              class="st-day"
+              [class.active]="day() === d"
+              (click)="day.set(d)"
+            >
+              <b>{{ d | relativeDay }}</b>
+              <span>{{ d | dayShort }}</span>
+            </button>
+          }
+        </div>
+
+        @if (showtimesForDay().length === 0) {
+          <div class="empty-note">{{ 'MV_NO_SHOWTIMES' | tr }}</div>
+        } @else {
+          <div class="st-grid" reveal>
+            @for (st of showtimesForDay(); track st.id) {
+              <button type="button" class="st-card" (click)="pick(st)">
+                <div class="st-card__time">{{ st.time | clock }}</div>
+                <div class="st-card__meta">
+                  <span class="tag tag--gold">{{ hallOf(st)?.kind }}</span>
+                  <span class="st-card__hall">{{ hallOf(st)?.name | local }}</span>
+                </div>
+                <div class="st-card__price">{{ 'HOME_FEATURED_PRICE' | tr }} {{ st.price }} {{ currency }}</div>
+                <span class="st-card__go">
+                  {{ 'MV_PICK_SEATS' | tr }}
+                  <svg class="icon-fwd" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </span>
+              </button>
+            }
+          </div>
+        }
+      </section>
+    }
+  </article>
+} @else {
+  <div class="empty-note" style="padding-block: 120px">{{ 'M_LOADING' | tr }}</div>
+}

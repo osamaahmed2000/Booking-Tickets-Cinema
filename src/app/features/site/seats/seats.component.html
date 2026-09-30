@@ -1,0 +1,99 @@
+@if (showtime(); as st) {
+  <section class="container section section--tight">
+    <div class="seats-head animate-in">
+      <div>
+        <span class="kicker">{{ 'SEATS_TITLE' | tr }}</span>
+        <h1 class="seats-title">
+          {{ movieTitle(st) }}
+        </h1>
+        <p class="seats-head__info">
+          {{ st.dateISO | day }} · {{ st.time | clock }} ·
+          <a [routerLink]="['/movie', movieOf(st)?.id]" class="link">{{ hallOf(st)?.name | local }}</a>
+        </p>
+      </div>
+      <div class="seats-crumbs">
+        <span class="done">{{ 'MV_PICK_DATE' | tr }}</span>
+        <span class="done">{{ 'MV_PICK_TIME' | tr }}</span>
+        <span class="active">{{ 'MV_PICK_SEATS' | tr }}</span>
+      </div>
+    </div>
+
+    <div class="seats-grid">
+      <div class="seats-left">
+        <div class="seat-card card" [class.animate-in]="true">
+          <app-seat-map
+            [hall]="hallOf(st)!"
+            [booked]="st.bookedSeats"
+            [selected]="selection()"
+            [standardPrice]="st.price"
+            [vipPrice]="st.vipPrice"
+            [currency]="currency"
+            [movieTitle]="movieTitle(st)"
+            (toggle)="onToggle($event)"
+          />
+          <div class="legend">
+            <span><i class="sw sw--av"></i>{{ 'SEATS_LEGEND_AVAILABLE' | tr }}</span>
+            <span><i class="sw sw--sel"></i>{{ 'SEATS_LEGEND_SELECTED' | tr }}</span>
+            <span><i class="sw sw--taken"></i>{{ 'SEATS_LEGEND_TAKEN' | tr }}</span>
+            <span><i class="sw sw--vip"></i>{{ 'SEATS_LEGEND_VIP' | tr }}</span>
+          </div>
+          <p class="seats-hint">{{ 'SEATS_MAX' | tr }}</p>
+        </div>
+      </div>
+
+      <aside class="summary">
+        <div class="summary__card card">
+          <div class="summary__top">
+            <div class="summary__poster">
+              @if (movieOf(st); as m) {
+                <app-poster [art]="m.art" [title]="m.title | local" [year]="m.year" />
+              }
+            </div>
+            <div class="summary__id">
+              <h3>{{ movieTitle(st) }}</h3>
+              <span class="tag tag--gold">{{ hallOf(st)?.kind }}</span>
+              <p>{{ hallOf(st)?.name | local }}</p>
+              <p class="summary__date">{{ st.dateISO | relativeDay }} · {{ st.dateISO | day }} · {{ st.time | clock }}</p>
+            </div>
+          </div>
+
+          <hr class="rule">
+
+          <div class="summary__seats">
+            <h4>{{ 'SEATS_SUMMARY' | tr }}</h4>
+            @if (selection().length === 0) {
+              <p class="summary__empty">{{ 'SEATS_EMPTY' | tr }}</p>
+            } @else {
+              <div class="summary__chips">
+                @for (code of selection(); track code) {
+                  <button type="button" class="seat-chip" (click)="onToggle(code)">
+                    <b>{{ code }}</b>
+                    <span>{{ seatPriceAbs(st, code) }}</span>
+                    <i>×</i>
+                  </button>
+                }
+              </div>
+            }
+          </div>
+
+          <hr class="rule">
+
+          <div class="summary__total">
+            <div class="row"><span>{{ 'SEATS_SUBTOTAL' | tr }}</span><b>{{ totals.subtotal | money }}</b></div>
+            <div class="row"><span>{{ 'SEATS_COUNT' | tr }}</span><b>{{ selection().length }}</b></div>
+          </div>
+
+          <button type="button" class="btn btn--gold btn--lg btn--block summary__cta" [disabled]="selection().length === 0" (click)="next()">
+            {{ 'SEATS_CONTINUE' | tr }}
+            <svg class="icon-fwd" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </aside>
+    </div>
+  </section>
+} @else {
+  <div class="empty-note" style="padding-block: 140px">
+    {{ 'SEATS_EMPTY' | tr }}
+    <div style="margin-top:18px"><a class="btn btn--line" routerLink="/movies">{{ 'MOVIES_TICKETS' | tr }}</a></div>
+  </div>
+}

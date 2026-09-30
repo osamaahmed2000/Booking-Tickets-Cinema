@@ -1,0 +1,105 @@
+.page-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.page-head__title {
+  font-size: clamp(26px, 4vw, 38px);
+}
+
+.hall-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.hall {
+  padding: 20px;
+}
+
+.hall__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.hall__name {
+  font-size: 18px;
+  margin-top: 8px;
+}
+
+.hall__cap {
+  font-family: var(--font-display);
+  font-size: 30px;
+  color: var(--gold-2);
+}
+
+.hall__rows {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px;
+  background: var(--bg);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.hall__row {
+  display: flex;
+  gap: 3px;
+  justify-content: center;
+}
+
+.seat-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  background: rgba(255,255,255,.18);
+}
+
+.seat-dot.vip {
+  background: var(--gold);
+}
+
+.hall__stats {
+  display: flex;
+  gap: 14px;
+  color: var(--text-3);
+  font-size: 12.5px;
+  margin: 14px 0;
+}
+
+.hall__actions {
+  display: flex;
+  gap: 8px;
+}
+
+.preview-box {
+  margin-top: 18px;
+}
+
+.preview-box app-seat-map {
+  display: block;
+}
+
+:host ::ng-deep .seat-view__tabs {
+  display: none !important;
+}
+
+:host ::ng-deep .map2d {
+  background: var(--bg);
+  border: 0;
+  padding: 12px;
+  border-radius: 10px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}

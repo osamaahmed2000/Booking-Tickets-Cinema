@@ -1,0 +1,8 @@
+<div class="bc">
+  <svg [attr.viewBox]="'0 0 260 64'" preserveAspectRatio="none" class="bc__bars" aria-hidden="true">
+    @for (bar of bars(); track bar.x) {
+      <rect [attr.x]="bar.x" y="2" [attr.width]="bar.w" height="52" fill="#0c0c10" rx="0.5" />
+    }
+  </svg>
+  <span class="bc__text">{{ value }}</span>
+</div>

@@ -1,0 +1,157 @@
+@if (ready) {
+  <div class="mf animate-in">
+    <div class="page-head">
+      <div>
+        <a class="back" routerLink="/admin/movies">← {{ 'C_BACK' | tr }}</a>
+        <h1 class="page-head__title">{{ editing ? ('AD_MOV_EDIT' | tr) : ('AD_MOV_ADD' | tr) }}</h1>
+      </div>
+    </div>
+
+    <div class="mf__grid">
+      <form class="mf__form" [formGroup]="form">
+        <div class="card block">
+          <div class="block__head"><h3>{{ 'AD_MOV_LANG' | tr }}</h3></div>
+          <div class="form-row">
+            <div class="field" style="min-width:0">
+              <label>{{ 'AD_MOV_TITLE_EN' | tr }}</label>
+              <input class="input" formControlName="titleEn" />
+            </div>
+            <div class="field" style="min-width:0">
+              <label>{{ 'AD_MOV_TITLE_AR' | tr }}</label>
+              <input class="input" formControlName="titleAr" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="field" style="min-width:0">
+              <label>{{ 'AD_MOV_TAG_EN' | tr }}</label>
+              <input class="input" formControlName="tagEn" />
+            </div>
+            <div class="field" style="min-width:0">
+              <label>{{ 'AD_MOV_TAG_AR' | tr }}</label>
+              <input class="input" formControlName="tagAr" />
+            </div>
+          </div>
+          <div class="field">
+            <label>{{ 'AD_MOV_OVERVIEW_EN' | tr }}</label>
+            <textarea class="textarea" formControlName="overviewEn"></textarea>
+          </div>
+          <div class="field">
+            <label>{{ 'AD_MOV_OVERVIEW_AR' | tr }}</label>
+            <textarea class="textarea" formControlName="overviewAr"></textarea>
+          </div>
+          <div class="form-row">
+            <div class="field" style="min-width:0">
+              <label>{{ 'AD_MOV_GENRES_EN' | tr }}</label>
+              <input class="input" formControlName="genresEn" placeholder="Sci-Fi, Thriller" />
+            </div>
+            <div class="field" style="min-width:0">
+              <label>{{ 'AD_MOV_GENRES_AR' | tr }}</label>
+              <input class="input" formControlName="genresAr" placeholder="خيال علمي، إثارة" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="field" style="min-width:0">
+              <label>{{ 'AD_MOV_DIR_EN' | tr }}</label>
+              <input class="input" formControlName="dirEn" />
+            </div>
+            <div class="field" style="min-width:0">
+              <label>{{ 'AD_MOV_DIR_AR' | tr }}</label>
+              <input class="input" formControlName="dirAr" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="field" style="min-width:0">
+              <label>{{ 'AD_MOV_CAST_EN' | tr }}</label>
+              <input class="input" formControlName="castEn" placeholder="A, B, C" />
+            </div>
+            <div class="field" style="min-width:0">
+              <label>{{ 'AD_MOV_CAST_AR' | tr }}</label>
+              <input class="input" formControlName="castAr" placeholder="أ، ب، ج" />
+            </div>
+          </div>
+        </div>
+
+        <div class="card block">
+          <div class="block__head"><h3>{{ 'AD_MOV_STATUS' | tr }}</h3></div>
+          <div class="form-row">
+            <div class="field" style="min-width:0">
+              <label>{{ 'AD_MOV_STATUS' | tr }}</label>
+              <select class="select" formControlName="status">
+                <option value="now">{{ 'AD_MOV_NOW' | tr }}</option>
+                <option value="soon">{{ 'AD_MOV_SOON' | tr }}</option>
+              </select>
+            </div>
+            <div class="field" style="min-width:0">
+              <label>{{ 'AD_MOV_BADGE' | tr }}</label>
+              <input class="input" formControlName="badge" placeholder="IMAX / 3D" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="field" style="min-width:0">
+              <label>{{ 'AD_MOV_YEAR' | tr }}</label>
+              <input class="input" type="number" formControlName="year" />
+            </div>
+            <div class="field" style="min-width:0">
+              <label>{{ 'AD_MOV_DUR' | tr }}</label>
+              <input class="input" type="number" formControlName="duration" />
+            </div>
+            <div class="field" style="min-width:0">
+              <label>{{ 'AD_MOV_RATING' | tr }}</label>
+              <input class="input" type="number" step="0.1" min="0" max="10" formControlName="rating" />
+            </div>
+            <div class="field" style="min-width:0">
+              <label>{{ 'AD_MOV_AGE' | tr }}</label>
+              <input class="input" formControlName="age" placeholder="13+" />
+            </div>
+          </div>
+        </div>
+
+        <div class="card block">
+          <div class="block__head"><h3>{{ 'AD_MOV_STYLE' | tr }}</h3></div>
+          <div class="press">
+            @for (p of presets; track p.name) {
+              <button type="button" class="press__chip" (click)="applyPreset(p.art)">
+                <i [style.background]="'linear-gradient(135deg, ' + p.art.bg[0] + ', ' + p.art.bg[1] + ')'"></i>
+                <span>{{ p.name }}</span>
+              </button>
+            }
+          </div>
+          <div class="form-row" style="margin-top:18px">
+            <div class="field" style="min-width:0">
+              <label>{{ 'AD_MOV_STYLE' | tr }} (style)</label>
+              <select class="select" formControlName="style">
+                @for (s of styles; track s) { <option [value]="s">{{ s }}</option> }
+              </select>
+            </div>
+            <div class="field" style="min-width:0">
+              <label>Accent</label>
+              <input class="input" type="color" formControlName="accent" style="height:46px; padding:4px; cursor:pointer" />
+            </div>
+            <div class="field" style="min-width:0">
+              <label>Accent 2</label>
+              <input class="input" type="color" formControlName="accent2" style="height:46px; padding:4px; cursor:pointer" />
+            </div>
+          </div>
+        </div>
+
+        <div class="mf__save">
+          <button type="button" class="btn btn--line" routerLink="/admin/movies">{{ 'C_CANCEL' | tr }}</button>
+          <button type="button" class="btn btn--gold" (click)="save()">{{ 'AD_MOV_SAVE' | tr }}</button>
+        </div>
+      </form>
+
+      <div class="mf__preview">
+        <div class="mf__preview-sticky">
+          <span class="kicker">{{ 'AD_MOV_STYLE' | tr }}</span>
+          <div class="mf__poster" [style.--bg0]="form.value.bg0" [style.--bg1]="form.value.bg1">
+            <app-poster
+              [art]="previewArt"
+              [title]="form.value.titleEn || 'Untitled'"
+              [year]="form.value.year || ''"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+}

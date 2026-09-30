@@ -1,0 +1,142 @@
+<div class="cinema-3d-wrapper" #container>
+  <!-- Three.js Canvas Container -->
+  <div class="canvas-holder" #canvasHolder>
+    @if (webGlError()) {
+      <div class="webgl-fallback">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        <p>{{ 'WebGL is not available in your browser.' }}</p>
+      </div>
+    }
+  </div>
+
+  <!-- Floating 3D Hover Tooltip -->
+  @if (hoveredSeat(); as info) {
+    <div
+      class="seat-tooltip"
+      [style.left.px]="info.screenX"
+      [style.top.px]="info.screenY"
+      [class.is-vip]="info.isVip"
+      [class.is-sel]="info.isSelected"
+      [class.is-booked]="info.isBooked"
+    >
+      <div class="tooltip-header">
+        <span class="seat-code">{{ info.code }}</span>
+        <span class="seat-badge" [class.badge-vip]="info.isVip">
+          {{ info.isVip ? ('SEATS_LEGEND_VIP' | tr) : ('SEATS_LEGEND_STANDARD' | tr) }}
+        </span>
+      </div>
+      <div class="tooltip-body">
+        <div class="tooltip-row">
+          <span>{{ 'SEATS_ROW' | tr }}: <b>{{ info.row }}</b></span>
+          <span>{{ 'SEATS_SEAT' | tr }}: <b>{{ info.col }}</b></span>
+        </div>
+        @if (info.price > 0 && !info.isBooked) {
+          <div class="tooltip-price">
+            <span>{{ 'SEATS_PRICE' | tr }}:</span>
+            <b>{{ info.price }} {{ currency }}</b>
+          </div>
+        }
+        <div class="tooltip-status">
+          @if (info.isBooked) {
+            <span class="status-booked">{{ 'SEATS_RESERVED' | tr }}</span>
+          } @else if (info.isSelected) {
+            <span class="status-selected">{{ 'SEATS_CLICK_TO_REMOVE' | tr }}</span>
+          } @else {
+            <span class="status-available">{{ 'SEATS_CLICK_TO_SELECT' | tr }}</span>
+          }
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- 3D Camera Controls Toolbar -->
+  <div class="controls-overlay">
+    <div class="camera-toolbar">
+      <button
+        type="button"
+        class="cam-btn"
+        (click)="resetCamera()"
+        title="{{ 'SEATS_RESET_VIEW' | tr }}"
+        aria-label="Reset View"
+      >
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+          <path d="M3 3v5h5"/>
+        </svg>
+        <span>{{ 'SEATS_RESET_VIEW' | tr }}</span>
+      </button>
+
+      <button
+        type="button"
+        class="cam-btn"
+        (click)="frontView()"
+        title="{{ 'SEATS_SCREEN_VIEW' | tr }}"
+        aria-label="Screen View"
+      >
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="2" y="3" width="20" height="14" rx="2"/>
+          <line x1="8" y1="21" x2="16" y2="21"/>
+          <line x1="12" y1="17" x2="12" y2="21"/>
+        </svg>
+        <span>{{ 'SEATS_SCREEN_VIEW' | tr }}</span>
+      </button>
+
+      <button
+        type="button"
+        class="cam-btn"
+        (click)="topView()"
+        title="{{ 'SEATS_TOP_VIEW' | tr }}"
+        aria-label="Top View"
+      >
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+          <polyline points="2 17 12 22 22 17"/>
+          <polyline points="2 12 12 17 22 12"/>
+        </svg>
+        <span>{{ 'SEATS_TOP_VIEW' | tr }}</span>
+      </button>
+
+      <div class="cam-separator"></div>
+
+      <button
+        type="button"
+        class="cam-btn cam-btn--icon"
+        (click)="zoom(0.8)"
+        title="Zoom In"
+        aria-label="Zoom In"
+      >
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          <line x1="11" y1="8" x2="11" y2="14"/>
+          <line x1="8" y1="11" x2="14" y2="11"/>
+        </svg>
+      </button>
+
+      <button
+        type="button"
+        class="cam-btn cam-btn--icon"
+        (click)="zoom(1.25)"
+        title="Zoom Out"
+        aria-label="Zoom Out"
+      >
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          <line x1="8" y1="11" x2="14" y2="11"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="view-hint">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 14.93V17a1 1 0 0 1-2 0v-.07A8 8 0 0 1 4.07 11H4a1 1 0 0 1 0-2h.07A8 8 0 0 1 11 4.07V4a1 1 0 0 1 2 0v.07A8 8 0 0 1 19.93 11H20a1 1 0 0 1 0 2h-.07A8 8 0 0 1 13 16.93z"/>
+      </svg>
+      <span>{{ 'SEATS_3D_HINT' | tr }}</span>
+    </div>
+  </div>
+</div>

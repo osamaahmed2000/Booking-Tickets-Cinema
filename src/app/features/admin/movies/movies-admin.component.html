@@ -1,0 +1,56 @@
+<div class="page-head animate-in">
+  <div>
+    <span class="kicker">{{ 'AD_NAV_MOVIES' | tr }}</span>
+    <h1 class="page-head__title">{{ 'AD_MOV_TITLE' | tr }}</h1>
+  </div>
+  <a class="btn btn--gold btn--sm" routerLink="/admin/movies/new">+ {{ 'AD_MOV_ADD' | tr }}</a>
+</div>
+
+@if (movies().length === 0) {
+  <div class="card empty-note" style="padding-block:70px">{{ 'AD_MOV_NO' | tr }}</div>
+} @else {
+  <div class="card tbl-wrap">
+    <div class="tbl" role="table">
+      <div class="tbl__row tbl__row--head" role="row">
+        <span>{{ 'AD_MOV_ACTIONS'.length ? 'Film' : '' }}</span>
+        <span>{{ 'AD_MOV_STATUS' | tr }}</span>
+        <span>{{ 'AD_MOV_YEAR' | tr }} · {{ 'AD_MOV_RATING' | tr }}</span>
+        <span>{{ 'AD_MOV_ACTIONS' | tr }}</span>
+      </div>
+      @for (m of movies(); track m.id) {
+        <div class="tbl__row" role="row">
+          <div class="cell-film">
+            <a class="cell-film__thumb" [routerLink]="['/admin/movies', m.id]">
+              @if (m.art) { <app-poster [art]="m.art" [title]="m.title | local" [year]="m.year" /> }
+            </a>
+            <div>
+              <b class="cell-film__title">{{ m.title | local }}</b>
+              <span class="cell-film__genres">{{ genres(m) }}</span>
+            </div>
+          </div>
+          <span>
+            <span class="badge" [class.badge--now]="m.status === 'now'" [class.badge--soon]="m.status === 'soon'">
+              {{ m.status === 'now' ? ('AD_MOV_NOW' | tr) : ('AD_MOV_SOON' | tr) }}
+            </span>
+          </span>
+          <span class="cell-meta">{{ m.year }} · {{ m.rating.toFixed(1) }} · {{ m.durationMin }}'</span>
+          <div class="cell-actions">
+            <a class="btn btn--dark btn--sm" [routerLink]="['/admin/movies', m.id]">{{ 'C_EDIT' | tr }}</a>
+            <button type="button" class="btn btn--ghost btn--sm" (click)="askDelete(m)">{{ 'C_DELETE' | tr }}</button>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+}
+
+<app-modal [open]="target() !== null" [title]="'C_DELETE_TITLE' | tr" (close)="target.set(null)">
+  <p style="color: var(--text-2); margin-bottom: 20px;">
+    {{ 'C_DELETE_BODY' | tr }}
+    @if (target(); as m) { <b style="color: var(--text)">“{{ m.title | local }}”</b> }
+  </p>
+  <div class="modal-actions">
+    <button type="button" class="btn btn--line" (click)="target.set(null)">{{ 'C_CANCEL' | tr }}</button>
+    <button type="button" class="btn btn--danger" (click)="confirmDelete()">{{ 'C_YES' | tr }}</button>
+  </div>
+</app-modal>

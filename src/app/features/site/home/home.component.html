@@ -1,0 +1,180 @@
+<!-- HERO -->
+<header class="hero" [style.--b0]="featured().art.bg[0]" [style.--b1]="featured().art.bg[1]">
+  <div class="hero__glow"></div>
+  <div class="container hero__grid">
+    <div class="hero__text" [class.animate-in]="true">
+      <span class="kicker">{{ 'HOME_HERO_KICKER' | tr }}</span>
+      <h1 class="hero__title">
+        <span class="hero__title-line">{{ heroLines()[0] }}</span>
+        <span class="hero__title-line hero__title-line--accent">{{ heroLines()[1] }}</span>
+      </h1>
+      <p class="hero__sub">{{ 'HOME_HERO_SUB' | tr }}</p>
+      <div class="hero__actions">
+        <a class="btn btn--gold btn--lg" routerLink="/movies">
+          {{ 'HOME_HERO_CTA' | tr }}
+          <svg class="icon-fwd" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a class="btn btn--line btn--lg" [routerLink]="['/movie', featured().id]">{{ 'HOME_FEATURED_CT' | tr }}</a>
+      </div>
+      <div class="hero__meta">
+        <div class="hero__meta-item">
+          <b>{{ nowShowing().length }}</b>
+          <span>{{ 'MOVIES_NOW' | tr }}</span>
+        </div>
+        <div class="hero__meta-item">
+          <b>{{ halls().length }}</b>
+          <span>{{ 'HOME_HALLS' | tr }}</span>
+        </div>
+        <div class="hero__meta-item">
+          <b>2D→3D</b>
+          <span>{{ 'HOME_WHY_1_T' | tr }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero__poster" [class.animate-in]="true" [style.animation-delay]="'.15s'">
+      <div class="hero__poster-frame">
+        <app-poster [art]="featured().art" [title]="featured().title | local" [year]="featured().year" />
+      </div>
+      <div class="hero__badge">
+        <span class="hero__badge-kicker">{{ 'HOME_FEATURED_KICKER' | tr }}</span>
+        <span class="hero__badge-title">{{ featured().title | local }}</span>
+        <div class="hero__badge-row">
+          <span class="tag tag--gold">{{ featured().badge }}</span>
+          <span>{{ 'HOME_FEATURED_PRICE' | tr }} {{ featuredPrice() }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee__track">
+      <div class="marquee__group">
+        @for (m of marqueeList; track m) {
+          <span>{{ m }}</span><i>·</i>
+        }
+      </div>
+      <div class="marquee__group">
+        @for (m of marqueeList; track m + 'b') {
+          <span>{{ m }}</span><i>·</i>
+        }
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- NOW SHOWING -->
+<section class="section container" id="now">
+  <div class="section-head" reveal>
+    <div>
+      <span class="kicker">{{ 'HOME_NOW_SHOWING_SUB' | tr }}</span>
+      <h2 class="title">{{ 'HOME_NOW_SHOWING' | tr }}</h2>
+    </div>
+    <a class="btn btn--line btn--sm" routerLink="/movies">{{ 'AD_NAV_MOVIES' | tr }} →</a>
+  </div>
+  <div class="grid" reveal>
+    @for (m of nowShowing(); track m.id) {
+      <app-movie-card [movie]="m" />
+    }
+  </div>
+</section>
+
+<!-- COMING SOON -->
+<section class="section section--tight">
+  <div class="container">
+    <div class="section-head" reveal>
+      <div>
+        <span class="kicker">{{ 'HOME_COMING_SOON_SUB' | tr }}</span>
+        <h2 class="title">{{ 'HOME_COMING_SOON' | tr }}</h2>
+      </div>
+    </div>
+    <div class="soon-row" reveal>
+      @for (m of comingSoon(); track m.id) {
+        <a class="soon-card" [routerLink]="['/movie', m.id]">
+          <app-poster [art]="m.art" [title]="m.title | local" [year]="m.year" />
+          <div class="soon-card__body">
+            <h3 class="soon-card__title">{{ m.title | local }}</h3>
+            <span class="soon-card__date">{{ quickDay(m) }}</span>
+            <span class="soon-card__genres">{{ genresLabel(m) }}</span>
+          </div>
+        </a>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- HALLS -->
+<section class="section">
+  <div class="container">
+    <div class="section-head" reveal>
+      <div>
+        <span class="kicker">{{ 'HOME_HALLS_SUB' | tr }}</span>
+        <h2 class="title">{{ 'HOME_HALLS' | tr }}</h2>
+      </div>
+    </div>
+    <div class="halls" reveal>
+      @for (hall of halls(); track hall.id) {
+        <div class="hall">
+          <div class="hall__top">
+            <span class="tag tag--gold">{{ hall.kind }}</span>
+            <span class="hall__cap">{{ hall.rows * hall.seatsPerRow }}</span>
+          </div>
+          <h3 class="hall__name">{{ hall.name | local }}</h3>
+          <p class="hall__desc">{{ hallDesc(hall.kind) }}</p>
+          <div class="hall__foot">
+            <span class="tag">{{ hall.rows }} {{ 'AD_HALL_ROWS' | tr }}</span>
+            <span class="tag">{{ hall.seatsPerRow }} {{ 'AD_HALL_SEATS' | tr }}</span>
+          </div>
+          <a class="hall__cta" routerLink="/movies">
+            {{ 'HOME_HALLS_CT' | tr }}
+            <svg class="icon-fwd" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- WHY -->
+<section class="section why">
+  <div class="container">
+    <div class="section-head" reveal>
+      <div>
+        <span class="kicker">NOIR</span>
+        <h2 class="title">{{ 'HOME_WHY' | tr }}</h2>
+      </div>
+    </div>
+    <div class="why__grid">
+      @for (f of features; track f.title) {
+        <div class="why__item" reveal>
+          <div class="why__num">{{ '0' + (f.index + 1) }}</div>
+          <h3 class="why__title">{{ f.title }}</h3>
+          <p class="why__desc">{{ f.desc }}</p>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- NEWSLETTER -->
+<section class="section container">
+  <div class="news" reveal>
+    <div class="news__inner">
+      <div>
+        <span class="kicker">NOIR LIST</span>
+        <h2 class="news__title">{{ 'HOME_NEWSLETTER_T' | tr }}</h2>
+        <p class="news__sub">{{ 'HOME_NEWSLETTER_D' | tr }}</p>
+      </div>
+      <form class="news__form" (submit)="subscribe($event)">
+        <input
+          class="input news__input"
+          type="email"
+          required
+          [attr.placeholder]="'HOME_NEWSLETTER_PH' | tr"
+          #mail
+        />
+        <button type="submit" class="btn btn--gold">{{ 'HOME_NEWSLETTER_CT' | tr }}</button>
+      </form>
+    </div>
+  </div>
+</section>

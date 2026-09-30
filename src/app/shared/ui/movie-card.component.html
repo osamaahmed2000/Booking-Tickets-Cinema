@@ -1,0 +1,40 @@
+<a class="mcard" [routerLink]="['/movie', movie().id]">
+  <div class="mcard__poster">
+    <app-poster [art]="movie().art" [title]="movie().title | local" [year]="movie().year" />
+    @if (movie().badge) {
+      <span class="mcard__badge tag tag--gold">{{ movie().badge }}</span>
+    }
+    @if (movie().status === 'soon') {
+      <div class="mcard__soon">
+        <span class="mcard__soon-title">{{ 'MOVIES_SOON' | tr }}</span>
+        <span class="mcard__soon-date">{{ movie().year }}</span>
+      </div>
+    } @else {
+      <div class="mcard__overlay">
+        <span class="mcard__score">
+          <b>{{ movie().rating.toFixed(1) }}</b>
+          <i>/ 10</i>
+        </span>
+        <span class="mcard__cta">
+          {{ 'MOVIES_TICKETS' | tr }}
+          <svg class="icon-fwd" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+      </div>
+    }
+  </div>
+  <div class="mcard__body">
+    <h3 class="mcard__title">{{ movie().title | local }}</h3>
+    <div class="mcard__meta">
+      <span>{{ movie().year }}</span>
+      <span class="dot">·</span>
+      <span>{{ movie().durationMin }} {{ 'C_MIN' | tr }}</span>
+      <span class="dot">·</span>
+      <span>{{ movie().age }}</span>
+    </div>
+    <div class="mcard__genres">
+      @for (g of movie().genres.slice(0, 3); track g.en) {
+        <span>{{ g | local }}</span>
+      }
+    </div>
+  </div>
+</a>

@@ -1,0 +1,46 @@
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text);
+}
+
+.logo__mark {
+  width: 40px;
+  height: 40px;
+  color: var(--gold);
+  flex-shrink: 0;
+  transition: transform 0.6s var(--ease);
+}
+
+.logo:hover .logo__mark {
+  transform: rotate(90deg);
+}
+
+.logo__name {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.05;
+}
+
+.logo__name > span {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.34em;
+}
+
+html[lang='ar'] .logo__name > span {
+  font-family: 'Tajawal', sans-serif;
+  font-size: 20px;
+  letter-spacing: 0.06em;
+}
+
+.logo__name small {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-top: 3px;
+}

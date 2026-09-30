@@ -1,0 +1,9 @@
+<div class="toasts">
+  @for (toast of toasts; track toast.id) {
+    <div class="toast toast--{{ toast.kind }}" (click)="dismiss(toast.id)">
+      <span class="toast__dot"></span>
+      <span class="toast__msg">{{ toast.message }}</span>
+      <button type="button" class="toast__x" aria-label="close">×</button>
+    </div>
+  }
+</div>

@@ -1,0 +1,18 @@
+.poster {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  overflow: hidden;
+  background: #000;
+  box-shadow: var(--shadow-md);
+}
+
+.poster__svg {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.8s var(--ease);
+}
+
+.poster:hover .poster__svg {
+  transform: scale(1.03);
+}

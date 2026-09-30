@@ -1,0 +1,61 @@
+<div class="page-head animate-in">
+  <div>
+    <span class="kicker">{{ 'AD_NAV_BOOKINGS' | tr }}</span>
+    <h1 class="page-head__title">{{ 'AD_BK_TITLE' | tr }}</h1>
+  </div>
+</div>
+
+<div class="filter animate-in">
+  @for (f of filters; track f.key) {
+    <button type="button" class="chip" [class.active]="filter() === f.key" (click)="filter.set(f.key)">{{ f.label }}</button>
+  }
+  <span class="filter__count">{{ items().length }} {{ 'AD_DASH_BOOKINGS' | tr }}</span>
+</div>
+
+@if (items().length === 0) {
+  <div class="card empty-note" style="padding-block:70px">{{ 'AD_BK_NO' | tr }}</div>
+} @else {
+  <div class="card tbl">
+    @for (b of items(); track b.id) {
+      <div class="row">
+        <div class="col-code">
+          <b>{{ b.code }}</b>
+          <span>{{ b.createdAt | dayShort }}</span>
+        </div>
+        <div class="col-cust">
+          <b>{{ b.customer.name }}</b>
+          <span>{{ b.customer.email }}</span>
+        </div>
+        <div class="col-mov">
+          <span class="movie">{{ movieTitle(b) }}</span>
+          <span class="show">{{ show(b) }}</span>
+        </div>
+        <div class="col-seats">
+          @for (s of b.seats; track s) { <i>{{ s }}</i> }
+        </div>
+        <div class="col-total">
+          <b>{{ b.total | money }}</b>
+          <span>{{ b.payment }}</span>
+        </div>
+        <div class="col-status">
+          <span class="badge" [class.badge--ok]="b.status === 'confirmed'" [class.badge--err]="b.status === 'cancelled'">
+            {{ b.status === 'confirmed' ? ('MB_STATUS_CONFIRMED' | tr) : ('MB_STATUS_CANCELLED' | tr) }}
+          </span>
+        </div>
+        <div class="col-actions">
+          @if (b.status === 'confirmed') {
+            <button type="button" class="btn btn--ghost btn--sm" (click)="askCancel(b)">{{ 'AD_BK_CANCEL' | tr }}</button>
+          }
+        </div>
+      </div>
+    }
+  </div>
+}
+
+<app-modal [open]="target() !== null" [title]="'AD_BK_CANCEL' | tr" (close)="target.set(null)">
+  <p style="color: var(--text-2); margin-bottom: 20px;">{{ 'MB_CANCEL_CONFIRM' | tr }}</p>
+  <div class="modal-actions">
+    <button type="button" class="btn btn--line" (click)="target.set(null)">{{ 'C_CANCEL' | tr }}</button>
+    <button type="button" class="btn btn--danger" (click)="confirmCancel()">{{ 'C_YES' | tr }}</button>
+  </div>
+</app-modal>

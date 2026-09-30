@@ -4,20 +4,8 @@ import { hashString } from '../../core/utils';
 @Component({
   selector: 'app-qr',
   standalone: true,
-  template: `
-    <svg width="120" height="120" viewBox="0 0 120 120" class="qr" aria-label="Pass code">
-      @for (cell of cells(); track cell.key) {
-        <rect
-          [attr.x]="cell.x" [attr.y]="cell.y" width="5.4" height="5.4"
-          fill="#0c0c10"
-          [attr.opacity]="cell.on ? '1' : '0.08'"
-        />
-      }
-    </svg>
-  `,
-  styles: `
-    .qr { display: block; background: #f4f1ea; border-radius: 9px; padding: 8px; box-sizing: border-box; }
-  `,
+  templateUrl: './qr.component.html',
+  styleUrl: './qr.component.scss',
 })
 export class QrComponent {
   @Input({ required: true }) value = '';

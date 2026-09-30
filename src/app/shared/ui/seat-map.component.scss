@@ -1,0 +1,204 @@
+.seat-view {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.seat-view__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.seat-view__tabs {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid var(--line-strong);
+  border-radius: 12px;
+  padding: 4px;
+  background: var(--surface);
+}
+
+.seat-view__tabs button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 0;
+  background: transparent;
+  color: var(--text-2);
+  font-weight: 700;
+  font-size: 13px;
+  padding: 8px 16px;
+  border-radius: 9px;
+  transition: all 0.25s var(--ease);
+  cursor: pointer;
+}
+
+.seat-view__tabs button.active {
+  background: linear-gradient(135deg, rgba(201, 164, 102, 0.22), rgba(201, 164, 102, 0.12));
+  color: var(--gold-2);
+  box-shadow: inset 0 0 0 1px rgba(201, 164, 102, 0.4);
+}
+
+.seat-view__tabs button:hover:not(.active) {
+  color: var(--text);
+}
+
+.hall-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  color: var(--text-3);
+}
+
+.hall-kind-tag {
+  background: rgba(201, 164, 102, 0.14);
+  color: var(--gold);
+  border: 1px solid rgba(201, 164, 102, 0.3);
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 11px;
+}
+
+/* ---- 2D Map ---- */
+.map2d {
+  padding: 26px 20px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, var(--surface), var(--bg-2));
+  border: 1px solid var(--line);
+  overflow-x: auto;
+}
+
+.screen {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  height: 46px;
+  margin-bottom: 26px;
+}
+
+.screen span {
+  height: 1px;
+  flex: 1;
+  background: linear-gradient(90deg, transparent, rgba(201, 164, 102, 0.45));
+}
+
+.screen span:last-child {
+  transform: scaleX(-1);
+}
+
+.screen i {
+  font-style: normal;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  background: linear-gradient(180deg, rgba(201, 164, 102, 0.8), transparent 90%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  padding-bottom: 8px;
+}
+
+.map2d__rows {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: max-content;
+  margin-inline: auto;
+}
+
+.map2d__row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.map2d__row.is-vip {
+  background: rgba(201, 164, 102, 0.05);
+  margin-inline: -14px;
+  padding-inline: 14px;
+  border-radius: 10px;
+  padding-block: 8px;
+}
+
+.map2d__rowlabel {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: var(--text-3);
+  width: 14px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.map2d__row.is-vip .map2d__rowlabel {
+  color: var(--gold);
+}
+
+.map2d__seats {
+  display: flex;
+  gap: clamp(4px, 0.5vw, 6px);
+  align-items: center;
+}
+
+.map2d__gap {
+  width: clamp(14px, 2vw, 26px);
+  flex-shrink: 0;
+}
+
+.seat {
+  position: relative;
+  width: clamp(20px, 2.4vw, 30px);
+  height: clamp(24px, 2.8vw, 34px);
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+  transition: transform 0.15s var(--ease), background 0.15s, border-color 0.15s, box-shadow 0.15s;
+  padding: 0;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.seat:hover:not(:disabled) {
+  transform: scale(1.12);
+  border-color: var(--gold);
+}
+
+.seat.is-vip {
+  background: linear-gradient(180deg, rgba(201, 164, 102, 0.45), rgba(201, 164, 102, 0.2));
+  border-color: rgba(201, 164, 102, 0.75);
+}
+
+.seat.is-sel {
+  background: linear-gradient(180deg, var(--gold-2), var(--gold));
+  border-color: var(--gold);
+  box-shadow: 0 4px 16px -2px rgba(201, 164, 102, 0.7);
+}
+
+.seat.is-taken {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.05);
+  cursor: not-allowed;
+}
+
+.seat.is-taken::after {
+  content: '';
+  position: absolute;
+  inset: 30% 12%;
+  border-top: 1.5px solid rgba(255, 255, 255, 0.12);
+  transform: rotate(45deg);
+}
+
+.seat.is-vip.is-taken::after {
+  border-color: rgba(201, 164, 102, 0.3);
+}

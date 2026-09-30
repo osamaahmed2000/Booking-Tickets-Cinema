@@ -1,0 +1,78 @@
+@if (booking(); as b) {
+  <section class="container section section--tight">
+    <div class="cf-head animate-in">
+      <span class="kicker kicker--muted">{{ 'CO_DONE_KICKER' | tr }}</span>
+      <h1 class="cf-title">{{ 'CO_DONE_T' | tr }}</h1>
+      <p class="cf-sub">{{ 'TICKET_EMAILED' | tr: { email: b.customer.email } }}</p>
+    </div>
+
+    <div class="cf-stage">
+      <div class="ticket animate-in">
+        <div class="ticket__main">
+          <div class="ticket__brand">
+            <span>{{ 'CINEMA_NAME' | tr }}</span>
+            <i>·</i>
+            <span>{{ 'TICKET_STUB' | tr }}</span>
+          </div>
+
+          <h2 class="ticket__film">{{ movieTitle(b) }}</h2>
+          <p class="ticket__tagline">{{ movieOf(b)?.tagline | local }}</p>
+
+          <div class="ticket__grid">
+            <div class="tk">
+              <span>{{ 'TICKET_MOVIE' | tr }}</span>
+              <b>{{ movieTitle(b) }}</b>
+            </div>
+            <div class="tk">
+              <span>{{ 'TICKET_HALL' | tr }}</span>
+              <b>{{ hallOf(b)?.name | local }} <em>{{ hallOf(b)?.kind }}</em></b>
+            </div>
+            <div class="tk">
+              <span>{{ 'TICKET_DATE' | tr }}</span>
+              <b>{{ (showtimeOf(b)?.dateISO ?? '') | day }}</b>
+            </div>
+            <div class="tk">
+              <span>{{ 'TICKET_TIME' | tr }}</span>
+              <b>{{ (showtimeOf(b)?.time ?? '') | clock }}</b>
+            </div>
+            <div class="tk">
+              <span>{{ 'TICKET_SEATS' | tr }}</span>
+              <b class="tk__seats">{{ b.seats.join(' · ') }}</b>
+            </div>
+            <div class="tk">
+              <span>{{ 'TICKET_PRICE' | tr }}</span>
+              <b>{{ b.total | money }}</b>
+            </div>
+          </div>
+
+          <p class="ticket__doors">{{ 'TICKET_DOORS' | tr }}</p>
+        </div>
+
+        <div class="ticket__perf" aria-hidden="true"></div>
+
+        <div class="ticket__stub">
+          <div class="ticket__code">
+            <span>{{ 'TICKET_CODE' | tr }}</span>
+            <b>{{ b.code }}</b>
+          </div>
+          <app-qr [value]="b.code + '-' + b.id" />
+          <app-barcode [value]="b.code + b.showtimeId" />
+          <p class="ticket__admit">ADMIT ONE</p>
+        </div>
+      </div>
+
+      <div class="cf-actions">
+        <button type="button" class="btn btn--gold" (click)="print()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="7"/></svg>
+          {{ 'TICKET_DOWNLOAD' | tr }}
+        </button>
+        <a class="btn btn--line" routerLink="/bookings">{{ 'TICKET_NEW' | tr }}</a>
+      </div>
+    </div>
+  </section>
+} @else {
+  <div class="empty-note" style="padding-block: 140px">
+    No ticket found.
+    <div style="margin-top:18px"><a class="btn btn--line" routerLink="/">Home</a></div>
+  </div>
+}

@@ -1,0 +1,110 @@
+<div class="dash animate-in">
+  <div class="dash__head">
+    <div>
+      <span class="kicker">{{ 'AD_DASH' | tr }}</span>
+      <h1 class="dash__title">{{ 'AD_DASH' | tr }}</h1>
+    </div>
+    <div class="dash__quick">
+      <a class="btn btn--gold btn--sm" routerLink="/admin/movies/new">+ {{ 'AD_MOV_ADD' | tr }}</a>
+      <a class="btn btn--line btn--sm" routerLink="/admin/showtimes">+ {{ 'AD_ST_ADD' | tr }}</a>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat card">
+      <span class="stat__label">{{ 'AD_DASH_REVENUE' | tr }}</span>
+      <b class="stat__value">{{ revenue | money }}</b>
+      <span class="stat__delta">
+        <i class="up">▲</i> {{ 'AD_STATS_WEEK' | tr }}
+      </span>
+    </div>
+    <div class="stat card">
+      <span class="stat__label">{{ 'AD_DASH_BOOKINGS' | tr }}</span>
+      <b class="stat__value">{{ bookings().length }}</b>
+      <span class="stat__delta">{{ todayCount }} {{ 'AD_STATS_TODAY' | tr }}</span>
+    </div>
+    <div class="stat card">
+      <span class="stat__label">{{ 'AD_DASH_SEATS' | tr }}</span>
+      <b class="stat__value">{{ seatsSold }}</b>
+      <span class="stat__delta">{{ avgPerBooking }} / {{ 'MB_STATUS_CONFIRMED' | tr }}</span>
+    </div>
+    <div class="stat card">
+      <span class="stat__label">{{ 'AD_DASH_OCCUPANCY' | tr }}</span>
+      <b class="stat__value">{{ occupancy }}<i>%</i></b>
+      <span class="stat__bar"><span [style.width.%]="occupancy"></span></span>
+    </div>
+  </div>
+
+  <div class="dash__row">
+    <div class="card panel">
+      <div class="panel__head">
+        <h3>{{ 'AD_DASH_7D' | tr }}</h3>
+        <span class="tag tag--gold">{{ 'AD_STATS_WEEK' | tr }}</span>
+      </div>
+      <svg class="chart" viewBox="0 0 560 240" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Revenue chart">
+        <defs>
+          <linearGradient id="barGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#e6c98f" stop-opacity="0.95" />
+            <stop offset="1" stop-color="#c9a466" stop-opacity="0.35" />
+          </linearGradient>
+        </defs>
+        @for (g of gridLines; track g.y) {
+          <line x1="34" [attr.y1]="g.y" x2="556" [attr.y2]="g.y" stroke="rgba(255,255,255,0.06)" stroke-width="1" />
+        }
+        @for (d of series; track d.i; let i = $index) {
+          <g>
+            <rect
+              [attr.x]="d.x" [attr.y]="d.y" [attr.width]="d.w" [attr.height]="d.h"
+              rx="6" fill="url(#barGrad)"
+              class="bar"
+            />
+            <text class="chart__val" [attr.x]="d.x + d.w / 2" [attr.y]="d.y - 10" text-anchor="middle">{{ d.short }}</text>
+            <text class="chart__lbl" [attr.x]="d.x + d.w / 2" y="232" text-anchor="middle">{{ d.label }}</text>
+          </g>
+        }
+      </svg>
+    </div>
+
+    <div class="card panel">
+      <div class="panel__head">
+        <h3>{{ 'AD_DASH_TOP' | tr }}</h3>
+        <span class="tag">{{ 'AD_DASH_TOP_SUB' | tr }}</span>
+      </div>
+      <div class="sellers">
+        @for (s of bestSellers; track s.movieId) {
+          <div class="seller">
+            <div class="seller__top">
+              <span class="seller__name">{{ s.title }}</span>
+              <span class="seller__count">{{ s.count }}</span>
+            </div>
+            <div class="seller__track"><span [style.width.%]="s.pct"></span></div>
+          </div>
+        }
+        @if (bestSellers.length === 0) {
+          <div class="empty-note">{{ 'AD_EMPTY_STATE' | tr }}</div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="card panel">
+    <div class="panel__head">
+      <h3>{{ 'AD_DASH_RECENT' | tr }}</h3>
+      <a class="panel__more" routerLink="/admin/bookings">{{ 'AD_DASH_VIEW_ALL' | tr }} →</a>
+    </div>
+    <div class="tbl">
+      @for (b of latest; track b.id) {
+        <div class="tbl__row">
+          <span class="tbl__code">{{ b.code }}</span>
+          <span class="tbl__name">{{ b.customer.name }}</span>
+          <span class="tbl__movie">{{ movie(b) }}</span>
+          <span class="tbl__seats">{{ b.seats.join(', ') }}</span>
+          <span class="tbl__total">{{ b.total | money }}</span>
+          <span class="badge" [class.badge--ok]="b.status === 'confirmed'" [class.badge--err]="b.status === 'cancelled'">
+            {{ b.status === 'confirmed' ? ('MB_STATUS_CONFIRMED' | tr) : ('MB_STATUS_CANCELLED' | tr) }}
+          </span>
+        </div>
+      }
+    </div>
+  </div>
+</div>

@@ -1,0 +1,33 @@
+.nf {
+  min-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.nf__mark {
+  color: var(--gold);
+  opacity: .85;
+  margin-bottom: 22px;
+}
+
+.nf__title {
+  font-size: clamp(34px, 6vw, 58px);
+}
+
+.nf__sub {
+  color: var(--text-2);
+  max-width: 42ch;
+  margin-block: 16px 30px;
+  font-size: 16px;
+}
+
+.nf__actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}

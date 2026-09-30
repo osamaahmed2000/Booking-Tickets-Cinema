@@ -1,0 +1,52 @@
+<section class="container section section--tight">
+  <div class="movies-head animate-in">
+    <div>
+      <span class="kicker">{{ 'MOVIES_SUB' | tr }}</span>
+      <h1 class="movies-head__title">{{ 'MOVIES_TITLE' | tr }}</h1>
+    </div>
+    <div class="movies-head__ops">
+      <div class="search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" stroke-linecap="round" />
+        </svg>
+        <input
+          class="search__input"
+          type="search"
+          [value]="query()"
+          (input)="onSearch($event)"
+          [attr.placeholder]="'MOVIES_SEARCH' | tr"
+        />
+      </div>
+    </div>
+  </div>
+
+  <div class="tabs animate-in" role="tablist">
+    @for (tab of statusTabs; track tab.key) {
+      <button
+        type="button"
+        class="chip"
+        [class.active]="status() === tab.key"
+        (click)="setStatus(tab.key)"
+      >{{ tab.label }}</button>
+    }
+  </div>
+
+  @if (genres().length > 1) {
+    <div class="genre-bar animate-in" [style.animation-delay]="'.06s'">
+      <button type="button" class="genre-chip" [class.active]="genre() === ''" (click)="genre.set('')">{{ 'MOVIES_ALL' | tr }}</button>
+      @for (g of genres(); track g) {
+        <button type="button" class="genre-chip" [class.active]="genre() === g" (click)="genre.set(g)">{{ g }}</button>
+      }
+    </div>
+  }
+
+  <div class="grid" [style.margin-top]="'26px'">
+    @for (m of filtered(); track m.id) {
+      <app-movie-card [movie]="m" />
+    }
+  </div>
+
+  @if (filtered().length === 0) {
+    <div class="empty-note" style="padding-block: 80px;">{{ 'MOVIES_EMPTY' | tr }}</div>
+  }
+</section>

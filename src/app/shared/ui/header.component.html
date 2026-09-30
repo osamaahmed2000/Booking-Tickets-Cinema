@@ -1,0 +1,39 @@
+<header class="head" [class.is-scrolled]="scrolled">
+  <div class="container head__in">
+    <app-logo />
+
+    <nav class="head__nav" aria-label="Main">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">{{ 'NAV_HOME' | tr }}</a>
+      <a routerLink="/movies" routerLinkActive="active">{{ 'NAV_MOVIES' | tr }}</a>
+      <a routerLink="/bookings" routerLinkActive="active">{{ 'NAV_BOOKINGS' | tr }}</a>
+      <a routerLink="/admin" routerLinkActive="active" class="head__admin">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <circle cx="12" cy="8" r="3.4" />
+          <path d="M5 19.5a7 7 0 0 1 14 0" />
+        </svg>
+        {{ 'NAV_ADMIN' | tr }}
+      </a>
+    </nav>
+
+    <div class="head__tools">
+      <app-lang-switch />
+      <a class="btn btn--gold btn--sm" routerLink="/movies">Ticket</a>
+      <button type="button" class="head__burger" (click)="menu = !menu" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+
+  @if (menu) {
+    <div class="menu">
+      <div class="menu__inner">
+        @for (item of navItems; track item.label) {
+          <a class="menu__link" [routerLink]="item.href" (click)="menu = false">{{ item.label }}</a>
+        }
+      </div>
+      <div class="menu__foot">
+        <app-lang-switch />
+      </div>
+    </div>
+  }
+</header>

@@ -1,0 +1,88 @@
+@if (hall) {
+  <div class="seat-view">
+    <!-- View Mode Switcher -->
+    <div class="seat-view__header">
+      <div class="seat-view__tabs">
+        <button
+          type="button"
+          [class.active]="view() === '3d'"
+          (click)="setView('3d')"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2l9 5v10l-9 5-9-5V7z"/>
+            <path d="M3 7l9 5 9-5M12 12v10"/>
+          </svg>
+          {{ '3D Cinema Hall' | tr }}
+        </button>
+        <button
+          type="button"
+          [class.active]="view() === '2d'"
+          (click)="setView('2d')"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="2"/>
+            <rect x="7" y="7" width="10" height="10" rx="1"/>
+          </svg>
+          {{ '2D Plan' | tr }}
+        </button>
+      </div>
+
+      <div class="hall-badge">
+        <span class="hall-kind-tag">{{ hall.kind }}</span>
+        <span class="hall-name-label">{{ hall.rows * hall.seatsPerRow }} {{ 'Seats' | tr }}</span>
+      </div>
+    </div>
+
+    <!-- 3D Three.js Cinema Hall View -->
+    @if (view() === '3d') {
+      <app-cinema-3d-seat-map
+        [hall]="hall"
+        [booked]="booked"
+        [selected]="selected"
+        [standardPrice]="standardPrice"
+        [vipPrice]="vipPrice"
+        [currency]="currency"
+        [movieTitle]="movieTitle"
+        [interactive]="interactive"
+        (toggle)="toggle.emit($event)"
+      />
+    }
+
+    <!-- 2D Fallback / Traditional Grid View -->
+    @if (view() === '2d') {
+      <div class="map2d">
+        <div class="screen bar">
+          <span></span>
+          <i>{{ 'SEATS_SCREEN' | tr }}</i>
+          <span></span>
+        </div>
+        <div class="map2d__rows">
+          @for (row of rows(); track row.label) {
+            <div class="map2d__row" [class.is-vip]="row.isVip">
+              <span class="map2d__rowlabel">{{ row.label }}</span>
+              <div class="map2d__seats">
+                @for (cell of row.seats; track cell.code) {
+                  @if (cell.code === '__gap__') {
+                    <span class="map2d__gap"></span>
+                  } @else {
+                    <button
+                      type="button"
+                      class="seat"
+                      [class.is-vip]="cell.state === 'vip'"
+                      [class.is-sel]="cell.state === 'selected'"
+                      [class.is-taken]="cell.state === 'taken'"
+                      [disabled]="cell.state === 'taken' || !interactive"
+                      (click)="toggle.emit(cell.code)"
+                      [attr.aria-label]="cell.code"
+                      [title]="cell.code + (cell.state === 'vip' ? ' (VIP)' : '')"
+                    ></button>
+                  }
+                }
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </div>
+}

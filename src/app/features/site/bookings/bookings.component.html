@@ -1,0 +1,94 @@
+<section class="container section section--tight">
+  <div class="section-head animate-in">
+    <div>
+      <span class="kicker">{{ 'MB_SUB' | tr }}</span>
+      <h1 class="mb-title">{{ 'MB_TITLE' | tr }}</h1>
+    </div>
+  </div>
+
+  <div class="lookup animate-in">
+    <div class="lookup__field">
+      <label>{{ 'MB_LOOKUP' | tr }}</label>
+      <div class="lookup__row">
+        <input class="input" [value]="q()" (input)="onSearch($event)" [attr.placeholder]="'MB_LOOKUP_PH' | tr" />
+        <button type="button" class="btn btn--gold btn--sm" (click)="lookup()">{{ 'MB_LOOKUP_BTN' | tr }}</button>
+      </div>
+    </div>
+    @if (lookupResult(); as b) {
+      <div class="ticket-mini card animate-in">
+        <div class="ticket-mini__poster">
+          @if (movieOf(b); as m) { <app-poster [art]="m.art" [title]="m.title | local" [year]="m.year" /> }
+        </div>
+        <div class="ticket-mini__info">
+          <h3>{{ movieTitle(b) }}</h3>
+          <p>{{ (showtimeOf(b)?.dateISO ?? '') | day }} · {{ (showtimeOf(b)?.time ?? '') | clock }} · {{ hallOf(b)?.name | local }}</p>
+          <div class="ticket-mini__seats">
+            @for (s of b.seats; track s) { <span>{{ s }}</span> }
+          </div>
+        </div>
+        <div class="ticket-mini__code">
+          <span>{{ 'TICKET_CODE' | tr }}</span>
+          <b>{{ b.code }}</b>
+          <span class="badge" [class.badge--ok]="b.status === 'confirmed'" [class.badge--err]="b.status === 'cancelled'">
+            {{ b.status === 'confirmed' ? ('MB_STATUS_CONFIRMED' | tr) : ('MB_STATUS_CANCELLED' | tr) }}
+          </span>
+          <a class="btn btn--gold btn--sm" style="margin-top: 6px" [routerLink]="['/confirmation', b.code]">{{ 'MB_VIEW_TICKET' | tr }}</a>
+        </div>
+      </div>
+    }
+    @if (lookupMiss()) {
+      <div class="lookup__miss">{{ 'MB_NOT_FOUND' | tr }}</div>
+    }
+  </div>
+
+  <div class="mb-list">
+    @if (myBookings().length === 0) {
+      <div class="empty-note" style="padding-block: 70px">
+        {{ 'MB_EMPTY' | tr }}
+        <div style="margin-top:16px"><a class="btn btn--gold" routerLink="/movies">{{ 'MB_EMPTY_CTA' | tr }}</a></div>
+      </div>
+    } @else {
+      @for (b of myBookings(); track b.code) {
+        <div class="mb-item card" reveal>
+          <div class="mb-item__poster">
+            @if (movieOf(b); as m) { <app-poster [art]="m.art" [title]="m.title | local" [year]="m.year" /> }
+          </div>
+          <div class="mb-item__body">
+            <div class="mb-item__top">
+              <span class="mb-item__order">{{ 'MB_ORDER' | tr }} · {{ b.code }}</span>
+              <span class="badge" [class.badge--ok]="b.status === 'confirmed'" [class.badge--err]="b.status === 'cancelled'">
+                {{ b.status === 'confirmed' ? ('MB_STATUS_CONFIRMED' | tr) : ('MB_STATUS_CANCELLED' | tr) }}
+              </span>
+            </div>
+            <h3 class="mb-item__title">{{ movieTitle(b) }}</h3>
+            <p class="mb-item__meta">{{ (showtimeOf(b)?.dateISO ?? '') | day }} · {{ (showtimeOf(b)?.time ?? '') | clock }} · {{ hallOf(b)?.name | local }}</p>
+            <div class="mb-item__foot">
+              <div class="mb-item__seats">
+                @for (s of b.seats; track s) { <span>{{ s }}</span> }
+              </div>
+              <div class="mb-item__total">
+                <b>{{ b.total | money }}</b>
+                <span>{{ (movieOf(b)?.rating ?? 0).toFixed(1) }}/10</span>
+              </div>
+            </div>
+          </div>
+          <div class="mb-item__actions">
+            <a class="btn btn--gold btn--sm" [routerLink]="['/confirmation', b.code]">{{ 'MB_VIEW_TICKET' | tr }}</a>
+            <a class="btn btn--line btn--sm" [routerLink]="['/movie', b.movieId]">{{ 'MB_REBOOK' | tr }}</a>
+            @if (b.status === 'confirmed') {
+              <button type="button" class="btn btn--ghost btn--sm" (click)="askCancel(b)">{{ 'MB_CANCEL' | tr }}</button>
+            }
+          </div>
+        </div>
+      }
+    }
+  </div>
+</section>
+
+<app-modal [open]="cancelTarget() !== null" [title]="'MB_CANCEL' | tr" (close)="cancelTarget.set(null)">
+  <p style="color: var(--text-2); margin-bottom: 18px;">{{ 'MB_CANCEL_CONFIRM' | tr }}</p>
+  <div class="modal-actions">
+    <button type="button" class="btn btn--line" (click)="cancelTarget.set(null)">{{ 'C_CANCEL' | tr }}</button>
+    <button type="button" class="btn btn--danger" (click)="confirmCancel()">{{ 'C_YES' | tr }}</button>
+  </div>
+</app-modal>

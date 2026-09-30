@@ -1,0 +1,105 @@
+<div class="page-head animate-in">
+  <div>
+    <span class="kicker">{{ 'AD_NAV_HALLS' | tr }}</span>
+    <h1 class="page-head__title">{{ 'AD_HALL_TITLE' | tr }}</h1>
+  </div>
+  <button type="button" class="btn btn--gold btn--sm" (click)="openNew()">+ {{ 'AD_HALL_ADD' | tr }}</button>
+</div>
+
+@if (halls().length === 0) {
+  <div class="card empty-note" style="padding-block:70px">{{ 'AD_HALL_NO' | tr }}</div>
+} @else {
+  <div class="hall-grid">
+    @for (h of halls(); track h.id) {
+      <div class="hall card">
+        <div class="hall__head">
+          <div>
+            <span class="tag tag--gold">{{ h.kind }}</span>
+            <h3 class="hall__name">{{ h.name | local }}</h3>
+          </div>
+          <span class="hall__cap">{{ h.rows * h.seatsPerRow }}</span>
+        </div>
+        <div class="hall__rows">
+          @for (r of seatRows(h); track r) {
+            <div class="hall__row">
+              @for (c of seatCols(h); track $index) {
+                @if (isAisleAfter(h, $index + 1)) { <span style="width:8px"></span> }
+                <span class="seat-dot" [class.vip]="isVipRow(h, r)"></span>
+              }
+            </div>
+          }
+        </div>
+        <div class="hall__stats">
+          <span>{{ h.rows }} {{ 'AD_HALL_ROWS' | tr }}</span>
+          <span>{{ h.seatsPerRow }} {{ 'AD_HALL_SEATS' | tr }}</span>
+          <span>{{ h.vipRows }} VIP</span>
+        </div>
+        <div class="hall__actions">
+          <button type="button" class="btn btn--dark btn--sm" (click)="openEdit(h)">{{ 'C_EDIT' | tr }}</button>
+          <button type="button" class="btn btn--ghost btn--sm" (click)="askDelete(h)">{{ 'C_DELETE' | tr }}</button>
+        </div>
+      </div>
+    }
+  </div>
+}
+
+<app-modal [open]="formOpen()" [title]="editingId() ? ('AD_HALL_SAVE' | tr) : ('AD_HALL_ADD' | tr)" (close)="formOpen.set(false)">
+  <form [formGroup]="form" class="hall-form">
+    <div class="form-row">
+      <div class="field" style="min-width:0">
+        <label>{{ 'AD_HALL_NAME_EN' | tr }}</label>
+        <input class="input" formControlName="nameEn" />
+      </div>
+      <div class="field" style="min-width:0">
+        <label>{{ 'AD_HALL_NAME_AR' | tr }}</label>
+        <input class="input" formControlName="nameAr" />
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="field" style="min-width:0">
+        <label>{{ 'AD_HALL_KIND' | tr }}</label>
+        <select class="select" formControlName="kind">
+          @for (k of kinds; track k) { <option [value]="k">{{ k }}</option> }
+        </select>
+      </div>
+      <div class="field" style="min-width:0">
+        <label>{{ 'AD_HALL_CAP' | tr }}</label>
+        <span class="cap" style="display:block; padding-top:12px; color: var(--gold); font-weight:700">{{ capacity }}</span>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="field" style="min-width:0">
+        <label>{{ 'AD_HALL_ROWS' | tr }}</label>
+        <input class="input" type="number" min="3" max="16" formControlName="rows" />
+      </div>
+      <div class="field" style="min-width:0">
+        <label>{{ 'AD_HALL_SEATS' | tr }}</label>
+        <input class="input" type="number" min="4" max="24" formControlName="seats" />
+      </div>
+      <div class="field" style="min-width:0">
+        <label>{{ 'AD_HALL_VIP' | tr }}</label>
+        <input class="input" type="number" min="0" formControlName="vip" />
+      </div>
+    </div>
+    <div class="field">
+      <label>{{ 'AD_HALL_AISLES' | tr }}</label>
+      <input class="input" formControlName="aisles" placeholder="4, 9" />
+    </div>
+    <div class="preview-box">
+      <span class="kicker">{{ 'AD_HALL_PREVIEW' | tr }}</span>
+      <app-seat-map [hall]="previewHall" [interactive]="false" />
+    </div>
+    <div class="modal-actions" style="margin-top:16px">
+      <button type="button" class="btn btn--line" (click)="formOpen.set(false)">{{ 'C_CANCEL' | tr }}</button>
+      <button type="button" class="btn btn--gold" (click)="save()">{{ 'AD_HALL_SAVE' | tr }}</button>
+    </div>
+  </form>
+</app-modal>
+
+<app-modal [open]="target() !== null" [title]="'C_DELETE_TITLE' | tr" (close)="target.set(null)">
+  <p style="color: var(--text-2); margin-bottom: 20px;">{{ 'C_DELETE_BODY' | tr }}</p>
+  <div class="modal-actions">
+    <button type="button" class="btn btn--line" (click)="target.set(null)">{{ 'C_CANCEL' | tr }}</button>
+    <button type="button" class="btn btn--danger" (click)="confirmDelete()">{{ 'C_YES' | tr }}</button>
+  </div>
+</app-modal>

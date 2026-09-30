@@ -1,0 +1,130 @@
+.head {
+  position: sticky;
+  top: 0;
+  z-index: 1200;
+  border-bottom: 1px solid transparent;
+  transition: background 0.35s, border-color 0.35s, backdrop-filter 0.35s;
+}
+
+.head.is-scrolled {
+  background: rgba(8, 8, 10, 0.82);
+  backdrop-filter: blur(16px);
+  border-color: var(--line);
+  box-shadow: 0 10px 40px -20px rgba(0, 0, 0, 0.8);
+}
+
+.head__in {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  height: var(--header-h);
+}
+
+.head__nav {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.head__nav a {
+  position: relative;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-2);
+  padding: 9px 14px;
+  border-radius: 999px;
+  transition: color 0.25s;
+}
+
+.head__nav a:hover {
+  color: var(--text);
+}
+
+.head__nav a.active {
+  color: var(--gold);
+}
+
+.head__nav a.active::after {
+  content: '';
+  position: absolute;
+  inset-inline: 14px;
+  bottom: 3px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--gold);
+}
+
+.head__admin {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.head__tools {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.head__tools .btn {
+  display: none;
+}
+
+.head__burger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: transparent;
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  padding: 10px 11px;
+}
+
+.head__burger span {
+  width: 18px;
+  height: 1.6px;
+  background: var(--text);
+  border-radius: 2px;
+}
+
+.menu {
+  display: none;
+}
+
+@media (max-width: 920px) {
+  .head__nav {
+    display: none;
+  }
+  .head__tools .btn {
+    display: none;
+  }
+  .head__burger {
+    display: flex;
+  }
+  .menu {
+    display: block;
+    background: var(--bg-2);
+    border-top: 1px solid var(--line);
+    padding: 18px 24px 28px;
+    animation: fadeIn 0.3s ease;
+  }
+  .menu__inner {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .menu__link {
+    font-family: var(--font-display);
+    font-size: 26px;
+    padding: 10px 4px;
+    color: var(--text);
+    border-bottom: 1px solid var(--line);
+  }
+  .menu__link:hover {
+    color: var(--gold);
+  }
+  .menu__foot {
+    margin-top: 22px;
+  }
+}
