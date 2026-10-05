@@ -1,4 +1,5 @@
 .poster {
+  position: relative;
   width: 100%;
   height: 100%;
   border-radius: inherit;
@@ -8,6 +9,7 @@
 }
 
 .poster__svg {
+  display: block;
   width: 100%;
   height: 100%;
   transition: transform 0.8s var(--ease);
@@ -16,3 +18,35 @@
 .poster:hover .poster__svg {
   transform: scale(1.03);
 }
+
+.poster__title-layer {
+  position: absolute;
+  inset-inline: 22px;
+  bottom: 22px;
+  z-index: 1;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.poster__title-text {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(16px, 3.8cqw, 24px);
+  font-weight: 700;
+  line-height: 1.25;
+  color: #f2efe8;
+  margin: 0;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.95), 0 0 16px rgba(0, 0, 0, 0.85);
+  word-break: break-word;
+}
+
+.poster__title-text.is-arabic,
+html[lang='ar'] .poster__title-text {
+  font-family: 'Tajawal', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: clamp(16px, 3.8cqw, 22px);
+  line-height: 1.35;
+  text-align: start;
+}
+

@@ -32,30 +32,7 @@ export class PosterComponent {
     c: i % 2 === 0 ? '#9bcd6f' : '#6d5a8f',
   }));
 
-  readonly lines = computed(() => {
-    const t = this.title().trim();
-    if (!t) return [];
-    const words = t.split(/\s+/);
-    const out: string[] = [];
-    let current = '';
-    const budget = 14;
-    for (const w of words) {
-      if ((current + ' ' + w).trim().length <= budget) {
-        current = (current + ' ' + w).trim();
-      } else {
-        if (current) out.push(current);
-        current = w.length > budget ? w.slice(0, budget - 1) + '·' : w;
-      }
-    }
-    if (current) out.push(current);
-    const shown = out.slice(0, 3);
-    const size = Math.max(...shown.map((l) => l.length)) > 13 ? 24 : 30;
-    const startY = 600 - 64;
-    return shown.map((text, i) => ({
-      text,
-      x: 32,
-      y: startY - (shown.length - 1 - i) * (size + 8),
-      size,
-    })) as Line[];
+  readonly isArabic = computed(() => {
+    return /[\u0600-\u06FF]/.test(this.title());
   });
 }

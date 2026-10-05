@@ -109,22 +109,14 @@
         }
       }
 
-      <!-- frame + label + title -->
+      <!-- frame + label -->
       <rect x="16" y="16" width="368" height="568" fill="none" stroke="rgba(242,239,232,0.14)" stroke-width="1.2" />
       <text x="28" y="44" font-size="10" letter-spacing="4" [attr.fill]="art()!.accent" font-weight="700" font-family="Manrope, Tajawal, sans-serif">NOIR · ORIGINAL</text>
       <text x="28" y="58" font-size="9.5" letter-spacing="2" fill="rgba(242,239,232,0.35)" font-family="Manrope, Tajawal, sans-serif">{{ year() }}</text>
-
-      <g>
-        @for (line of lines(); track line.text) {
-          <text
-            [attr.x]="line.x" [attr.y]="line.y"
-            [attr.font-size]="line.size" letter-spacing="1"
-            [attr.fill]="'#f2efe8'"
-            font-weight="600"
-            font-family="'Playfair Display', Tajawal, serif"
-          >{{ line.text }}</text>
-        }
-      </g>
     </svg>
+
+    <div class="poster__title-layer">
+      <h3 class="poster__title-text" [class.is-arabic]="isArabic()">{{ title() }}</h3>
+    </div>
   </div>
 }

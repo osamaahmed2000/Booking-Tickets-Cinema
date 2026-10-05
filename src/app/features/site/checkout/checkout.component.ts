@@ -8,6 +8,14 @@ import { ToastService } from '../../../core/services/toast.service';
 import { StorageService } from '../../../core/services/storage.service';
 import type { Booking, PaymentMethod, Showtime, CinemaHall, Movie } from '../../../core/models';
 import { bookingTotals, makeBookingCode, makeId } from '../../../core/utils';
+import {
+  egyptianMobileValidator,
+  normalizeEgyptianMobile,
+  cardNumberValidator,
+  cardHolderNameValidator,
+  expiryDateValidator,
+  cvvValidator,
+} from '../../../core/validators/payment.validators';
 import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
 import { LocalizePipe } from '../../../shared/pipes/localize.pipe';
 import { DayPipe, ClockPipe } from '../../../shared/pipes/date.pipe';
@@ -27,6 +35,7 @@ const MYREFS = 'noir:myrefs';
 export class CheckoutComponent implements OnInit {
   readonly promoInput = signal('');
   readonly promoError = signal(false);
+  readonly submitted = signal(false);
   readonly form!: FormGroup;
 
   private payMethod: PaymentMethod = 'card';
@@ -41,13 +50,13 @@ export class CheckoutComponent implements OnInit {
     private router: Router,
   ) {
     this.form = this.fb.group({
-      name: ['', Validators.required],
-      phone: ['', [Validators.required, Validators.pattern(/^[+\d][\d\s\-()]{7,19}$/)]],
+      name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
+      phone: ['', [Validators.required, egyptianMobileValidator()]],
       email: ['', [Validators.required, Validators.email]],
-      card: [''],
-      cardName: [''],
-      exp: [''],
-      cvv: [''],
+      card: ['', [Validators.required, cardNumberValidator()]],
+      cardName: ['', [Validators.required, cardHolderNameValidator()]],
+      exp: ['', [Validators.required, expiryDateValidator()]],
+      cvv: ['', [Validators.required, cvvValidator()]],
       agree: [false, Validators.requiredTrue],
     });
   }
@@ -63,6 +72,11 @@ export class CheckoutComponent implements OnInit {
     return this.form.get(key)!;
   }
 
+  isFieldInvalid(key: string): boolean {
+    const c = this.form.get(key);
+    return !!c && c.invalid && (c.touched || this.submitted());
+  }
+
   onPromo(e: Event): void {
     this.promoInput.set((e.target as HTMLInputElement).value);
   }
@@ -74,13 +88,20 @@ export class CheckoutComponent implements OnInit {
   setPayment(p: PaymentMethod): void {
     this.payMethod = p;
     this.flow.payment.set(p);
-    const cardReqs = ['card', 'cardName', 'exp', 'cvv'];
-    for (const k of cardReqs) {
-      const c = this.form.get(k)!;
+    const cardFields = [
+      { key: 'card', validators: [Validators.required, cardNumberValidator()] },
+      { key: 'cardName', validators: [Validators.required, cardHolderNameValidator()] },
+      { key: 'exp', validators: [Validators.required, expiryDateValidator()] },
+      { key: 'cvv', validators: [Validators.required, cvvValidator()] },
+    ];
+
+    for (const item of cardFields) {
+      const c = this.form.get(item.key)!;
       if (p === 'card') {
-        c.setValidators(k === 'card' ? [Validators.required] : k === 'cvv' ? [Validators.required] : []);
+        c.setValidators(item.validators);
       } else {
         c.clearValidators();
+        c.setErrors(null);
       }
       c.updateValueAndValidity();
     }
@@ -151,19 +172,42 @@ export class CheckoutComponent implements OnInit {
 
   formatCard(e: Event): void {
     const el = e.target as HTMLInputElement;
-    el.value = el.value.replace(/\D/g, '').slice(0, 16).replace(/(.{4})/g, '$1 ').trim();
+    const raw = el.value.replace(/\D/g, '').slice(0, 19);
+    const formatted = raw.replace(/(\d{4})(?=\d)/g, '$1 ').trim();
+    el.value = formatted;
+    this.form.get('card')?.setValue(formatted, { emitEvent: true });
   }
 
   formatExp(e: Event): void {
     const el = e.target as HTMLInputElement;
-    const d = el.value.replace(/\D/g, '').slice(0, 4);
-    el.value = d.length > 2 ? `${d.slice(0, 2)} / ${d.slice(2)}` : d;
+    let d = el.value.replace(/\D/g, '').slice(0, 4);
+    if (d.length === 1 && parseInt(d, 10) > 1) {
+      d = `0${d}`;
+    }
+    const formatted = d.length > 2 ? `${d.slice(0, 2)} / ${d.slice(2)}` : d;
+    el.value = formatted;
+    this.form.get('exp')?.setValue(formatted, { emitEvent: true });
+  }
+
+  formatCvv(e: Event): void {
+    const el = e.target as HTMLInputElement;
+    const raw = el.value.replace(/\D/g, '').slice(0, 4);
+    el.value = raw;
+    this.form.get('cvv')?.setValue(raw, { emitEvent: true });
   }
 
   submit(): void {
-    if (this.form.invalid || !this.showtime() || this.seats().length === 0) return;
+    this.submitted.set(true);
+    this.form.markAllAsTouched();
+
+    if (this.form.invalid || !this.showtime() || this.seats().length === 0) {
+      return;
+    }
+
     const st = this.showtime()!;
-    const movie = this.movieOf(st);
+    const phoneInput = this.form.value.phone || '';
+    const normalizedPhone = normalizeEgyptianMobile(phoneInput.trim());
+
     const booking: Booking = {
       id: makeId('bk'),
       code: makeBookingCode(),
@@ -177,12 +221,13 @@ export class CheckoutComponent implements OnInit {
       customer: {
         name: this.form.value.name!.trim(),
         email: this.form.value.email!.trim(),
-        phone: this.form.value.phone!.trim(),
+        phone: normalizedPhone,
       },
       payment: this.payMethod,
       status: 'confirmed',
       createdAt: new Date().toISOString(),
     };
+
     this.data.addBooking(booking);
     const refs = this.storage.get<string[]>(MYREFS) ?? [];
     refs.unshift(booking.code);

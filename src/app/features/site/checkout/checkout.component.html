@@ -16,20 +16,20 @@
           <div class="form-row">
             <div class="field" style="min-width:0">
               <label>{{ 'CO_NAME' | tr }}</label>
-              <input class="input" formControlName="name" [class.is-err]="f('name').invalid && f('name').touched" [attr.placeholder]="'CO_NAME' | tr" />
-              @if (f('name').invalid && f('name').touched) { <div class="form-error">{{ 'CO_VALID_REQ' | tr }}</div> }
+              <input class="input" formControlName="name" [class.is-err]="isFieldInvalid('name')" [attr.placeholder]="'CO_NAME' | tr" />
+              @if (isFieldInvalid('name')) { <div class="form-error">{{ 'CO_VALID_NAME' | tr }}</div> }
             </div>
           </div>
           <div class="form-row">
             <div class="field" style="min-width:0">
               <label>{{ 'CO_PHONE' | tr }}</label>
-              <input class="input" formControlName="phone" [class.is-err]="f('phone').invalid && f('phone').touched" placeholder="+20 100 000 0000" />
-              @if (f('phone').invalid && f('phone').touched) { <div class="form-error">{{ 'CO_VALID_PHONE' | tr }}</div> }
+              <input class="input" formControlName="phone" [class.is-err]="isFieldInvalid('phone')" placeholder="01012345678 / +20 10 1234 5678" />
+              @if (isFieldInvalid('phone')) { <div class="form-error">{{ 'CO_VALID_PHONE' | tr }}</div> }
             </div>
             <div class="field" style="min-width:0">
               <label>{{ 'CO_EMAIL' | tr }}</label>
-              <input class="input" type="email" formControlName="email" [class.is-err]="f('email').invalid && f('email').touched" placeholder="you@email.com" />
-              @if (f('email').invalid && f('email').touched) { <div class="form-error">{{ 'CO_VALID_EMAIL' | tr }}</div> }
+              <input class="input" type="email" formControlName="email" [class.is-err]="isFieldInvalid('email')" placeholder="you@email.com" />
+              @if (isFieldInvalid('email')) { <div class="form-error">{{ 'CO_VALID_EMAIL' | tr }}</div> }
             </div>
           </div>
         </div>
@@ -54,19 +54,25 @@
             <div class="form-row" style="margin-top:18px">
               <div class="field co-card--full" style="grid-column: 1/-1; min-width:0">
                 <label>{{ 'CO_CARD_NUMBER' | tr }}</label>
-                <input class="input" formControlName="card" inputmode="numeric" placeholder="1234 5678 9012 3456" (input)="formatCard($event)" />
+                <input class="input" formControlName="card" inputmode="numeric" placeholder="1234 5678 9012 3456" [class.is-err]="isFieldInvalid('card')" (input)="formatCard($event)" />
+                @if (isFieldInvalid('card')) { <div class="form-error">{{ 'CO_VALID_CARD' | tr }}</div> }
               </div>
               <div class="field" style="min-width:0">
                 <label>{{ 'CO_CARD_NAME' | tr }}</label>
-                <input class="input" formControlName="cardName" placeholder="A. KHALIL" />
+                <input class="input" formControlName="cardName" placeholder="OSAMA AHMED" [class.is-err]="isFieldInvalid('cardName')" />
+                @if (isFieldInvalid('cardName')) { <div class="form-error">{{ 'CO_VALID_CARD_NAME' | tr }}</div> }
               </div>
               <div class="field" style="min-width:0">
                 <label>{{ 'CO_CARD_EXP' | tr }}</label>
-                <input class="input" formControlName="exp" placeholder="MM / YY" maxlength="7" (input)="formatExp($event)" />
+                <input class="input" formControlName="exp" placeholder="MM / YY" maxlength="7" [class.is-err]="isFieldInvalid('exp')" (input)="formatExp($event)" />
+                @if (isFieldInvalid('exp')) {
+                  <div class="form-error">{{ (f('exp').errors?.['expiredCard'] ? 'CO_VALID_EXP_EXPIRED' : 'CO_VALID_EXP') | tr }}</div>
+                }
               </div>
               <div class="field" style="min-width:0">
                 <label>{{ 'CO_CARD_CVV' | tr }}</label>
-                <input class="input" formControlName="cvv" inputmode="numeric" maxlength="4" placeholder="123" />
+                <input class="input" type="password" formControlName="cvv" inputmode="numeric" maxlength="4" placeholder="•••" [class.is-err]="isFieldInvalid('cvv')" (input)="formatCvv($event)" autocomplete="cc-csc" />
+                @if (isFieldInvalid('cvv')) { <div class="form-error">{{ 'CO_VALID_CVV' | tr }}</div> }
               </div>
             </div>
           }
@@ -86,6 +92,9 @@
             <input type="checkbox" formControlName="agree" />
             <span>{{ 'CO_AGREE' | tr }}</span>
           </label>
+          @if (isFieldInvalid('agree')) {
+            <div class="form-error" style="margin-top: 6px;">{{ 'CO_VALID_AGREE' | tr }}</div>
+          }
         </div>
       </div>
     </form>
@@ -115,7 +124,7 @@
               <b class="total">{{ totals.total | money }}</b>
             </div>
 
-            <button type="button" class="btn btn--gold btn--lg btn--block" [disabled]="form.invalid || seats().length === 0" (click)="submit()">
+            <button type="button" class="btn btn--gold btn--lg btn--block" [disabled]="seats().length === 0" (click)="submit()">
               {{ payment() === 'paylater' ? ('CO_PAY_BTN_LATER' | tr) : ('CO_PAY_BTN' | tr) }}
             </button>
           } @else {
